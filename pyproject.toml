@@ -21,6 +21,7 @@ dependencies = [
 	'gpiozero',
 	'smbus3',
 	'spidev',
+	'numpy',
 ]
 
 [project.optional-dependencies]
