@@ -3,6 +3,12 @@ waveshare touch epaper
 
 a copy of the waveshare python library `waveshare library <https://github.com/waveshareteam/Touch_e-Paper_HAT>`_ for the Touch epaper display 2.13 inches and 2.9 inches. Like this, you can directly use pip to install the library in your virtual environement, without the need to clone or download all the files.
 
+hardware requirements
+=======================
+
+* one of the waveshare touch epaper display
+* raspberry pi (or probably an other computer with an gpio port and spi interface)
+
 Installation
 ============
 
