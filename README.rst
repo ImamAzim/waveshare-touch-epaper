@@ -35,18 +35,30 @@ Usage
 ========
 
 
-import and create instances of display and touch screen:
+To use a epaper display:
 
 .. code-block:: python
 
-    import waveshare_touch_epaper
     from waveshare_touch_epaper import epd2in13_V4 # to import module for other device, use dir function on the package name
-    from waveshare_touch_epaper import gt1151 # module of touch screen
-    epd = epd2in13_V4.EPD()
-    gt = gt1151.GT1151()
 
-Then, you can follow the `examples <https://github.com/waveshareteam/Touch_e-Paper_HAT/tree/main/python/examples>`_ from the waveshare team.
-    
+    epd = epd2in13_V4.EPD()
+
+    epd.init(epd.FULL_UPDATE)
+    epd.Clear(0xFF)
+
+    # add some code here to display images
+
+    epd.sleep()
+    epd.Dev_exit()
+
+You can follow the `examples <https://github.com/waveshareteam/Touch_e-Paper_HAT/tree/main/python/examples>`_ from the waveshare team to display some images
+
+To use the touch screen:
+
+.. code-block:: python
+
+    from waveshare_touch_epaper import gt1151
+    gt = gt1151.GT1151()
 
 
 Features
