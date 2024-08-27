@@ -12,9 +12,24 @@ hardware requirements
 Installation
 ============
 
+be sure that you have activated the spi and i2c interface. On the raspberry pi:
+
+.. code-block:: bash
+    sudo raspi-config nonint do_spi 1
+    sudo raspi-config nonint do_i2c 1
+
+and then you can install the package with pip
+
 .. code-block:: bash
 
     pip install git+https://github.com/ImamAzim/waveshare-touch-epaper.git
+
+If you work in a virtual environement, you will need first:
+
+.. code-block:: bash
+    sudo apt-get install python3-pip
+    sudo apt-get install python3-venv
+
 
 Usage
 ========
