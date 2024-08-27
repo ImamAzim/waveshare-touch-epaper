@@ -24,7 +24,7 @@ import and create instances of display and touch screen:
     epd = epd2in13_V4.EPD()
     gt = gt1151.GT1151()
 
-Then, you can follow the `examples <https://github.com/waveshareteam/Touch_e-Paper_HAT/tree/main/python/examples>` from the waveshare team.
+Then, you can follow the `examples <https://github.com/waveshareteam/Touch_e-Paper_HAT/tree/main/python/examples>`_ from the waveshare team.
     
 
 
