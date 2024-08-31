@@ -19,7 +19,7 @@ classifiers = [
 description = "module to control waveshare touch epaper displays"
 dependencies = [
 	'gpiozero',
-	'smbus3',
+	'smbus',
 	'spidev',
 	'numpy',
 ]
