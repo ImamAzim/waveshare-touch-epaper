@@ -61,7 +61,7 @@ To use the touch screen:
 
     from waveshare_touch_epaper import gt1151
     gt = gt1151.GT1151()
-    gt.GT_INIT()
+    gt.GT_Init()
 
 
 Features
