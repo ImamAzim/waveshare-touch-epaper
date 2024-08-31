@@ -29,7 +29,7 @@
 
 import gpiozero
 import time
-from smbus3 import SMBus
+from smbus import SMBus
 import spidev
 import ctypes
 import logging
