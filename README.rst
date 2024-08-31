@@ -59,7 +59,8 @@ To use the touch screen:
 
 .. code-block:: python
 
-    from waveshare_touch_epaper import gt1151
+    from waveshare_touch_epaper import gt1151, epd2in13_V4
+    epd = epd2in13_V4.EPD()
     gt = gt1151.GT1151()
     gt.GT_Init()
 
