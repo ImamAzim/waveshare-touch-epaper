@@ -86,6 +86,23 @@ class GT1151(object):
         self._digital_write(1)
         self._delay_ms(100)
 
+    def i2c_write(reg):
+        bus.write_byte_data(address, (reg>>8) & 0xff, reg & 0xff)
+
+    def i2c_readbyte(reg, len):
+        i2c_write(reg)
+        rbuf = []
+        for i in range(len):
+            rbuf.append(int(bus.read_byte(address)))
+        return rbuf
+
+    def GT_Read(self, Reg, len):
+        return config.i2c_readbyte(Reg, len)
+
+    def GT_ReadVersion(self):
+        buf = self.GT_Read(0x8140, 4)
+        print(buf)
+
     def GT_Init(self):
         self.GT_Reset()
         self.GT_ReadVersion()
