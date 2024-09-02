@@ -6,28 +6,42 @@ from smbus3 import SMBus
 import gpiozero
 
 
-address = 0x1
-
-
 class TouchEpaperException(Exception):
     pass
+
+
+class GT_Development:
+    """ internal class to keep track of touchscreen state """
+    def __init__(self):
+        self.Touch = 0
+        self.TouchpointFlag = 0
+        self.TouchCount = 0
+        self.Touchkeytrackid = [0, 1, 2, 3, 4]
+        self.X = [0, 1, 2, 3, 4]
+        self.Y = [0, 1, 2, 3, 4]
+        self.S = [0, 1, 2, 3, 4]
 
 
 class GT1151(object):
 
     """touch screen part of the 2.13 inch touch epaper display"""
 
+
     def __init__(self):
 
-        # gt1151.config.bus = SMBus(1)
-        # gt1151.config.GPIO_TRST = gpiozero.LED(gt1151.config.TRST)
-        # gt1151.config.GPIO_INT = gpiozero.Button(gt1151.config.INT, pull_up = False)
+        self._TRST = 22
+        self._INT = 27
+
+        self._address = 0x14
+        self._bus = SMBus(1)
+
+        self._GPIO_TRST = gpiozero.LED(self._TRST)
+        self._GPIO_INT = gpiozero.Button(self._INT, pull_up = False)
 
         self._flag_t = 1
 
-        self._gt = gt1151.GT1151()
-        self._gt_dev = gt1151.GT_Development()
-        self._gt_old = gt1151.GT_Development()
+        self._gt_dev = GT_Development()
+        self._gt_old = GT_Development()
 
         self._thread_gt = threading.Thread(target=self._pthread_irq)
         self._thread_gt.setDaemon(True)
@@ -46,12 +60,10 @@ class GT1151(object):
     def _pthread_irq(self):
         logging.info("pthread running")
         while self._flag_t == 1:
-            if self._gt.digital_read(self._gt.INT) == 0:
+            if self._gt.digital_read(self._INT) == 0:
                 self._gt_dev.Touch = 1
-                # logging.debug('switch dev.touch to 1')
             else:
                 self._gt_dev.Touch = 0
-                # logging.debug('switch dev.touch to 0')
         logging.info("thread:exit")
 
     def start(self):
@@ -124,4 +136,5 @@ class GT1151(object):
 
 
 if __name__ == '__main__':
+    gt1151 = GT1151()
     pass
