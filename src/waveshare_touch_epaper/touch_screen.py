@@ -56,10 +56,13 @@ class GT1151(object):
         if not self._stopped:
             self.stop()
 
+    def _digital_read(self):
+            return self._gpio_int.value
+
     def _pthread_irq(self):
         logging.info("pthread running")
         while self._flag_t == 1:
-            if self._gt.digital_read(self._INT) == 0:
+            if self._digital_read() == 0:
                 self._gt_dev.Touch = 1
             else:
                 self._gt_dev.Touch = 0
