@@ -1,3 +1,4 @@
+import time
 import threading
 import logging
 
@@ -68,6 +69,27 @@ class GT1151(object):
                 self._gt_dev.Touch = 0
         logging.info("thread:exit")
 
+    def _digital_write(self, value):
+        if value:
+            self._gpio_trst.on()
+        else:
+            self._gpio_trst.off()
+
+    def _delay_ms(delaytime):
+        time.sleep(delaytime / 1000.0)
+
+    def _reset(self):
+        self._digital_write(1)
+        self._delay_ms(100)
+        self._digital_write(0)
+        self._delay_ms(100)
+        self._digital_write(1)
+        self._delay_ms(100)
+
+    def GT_Init(self):
+        self.GT_Reset()
+        self.GT_ReadVersion()
+
     def start(self):
         """start the thread and init the touch device
 
@@ -75,12 +97,12 @@ class GT1151(object):
         if not self._stopped:
             self._thread_gt.start()
             logging.info("init touch screen")
-            self._gt.GT_Init()
+            self._GT_Init()
             self._ready = True
         else:
             logging.exception(
                     'touch screen has been stopped.',
-                    'you must recreate and instance of EGT1151 and start it.')
+                    'you must recreate and instance of GT1151 and start it.')
             raise TouchEpaperException()
 
     def stop(self):

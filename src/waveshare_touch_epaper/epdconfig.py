@@ -89,7 +89,7 @@ def digital_read(pin):
         return GPIO_INT.value
 
 def delay_ms(delaytime):
-    time.sleep(delaytime / 1000.0)
+time.sleep(delaytime / 1000.0)
 
 def spi_writebyte(data):
     spi.writebytes(data)
