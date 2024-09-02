@@ -26,17 +26,16 @@ class GT1151(object):
 
     """touch screen part of the 2.13 inch touch epaper display"""
 
+    _TRST = 22
+    _INT = 27
+    _ADDRESS = 0x14
 
     def __init__(self):
 
-        self._TRST = 22
-        self._INT = 27
-
-        self._address = 0x14
         self._bus = SMBus(1)
 
-        self._GPIO_TRST = gpiozero.LED(self._TRST)
-        self._GPIO_INT = gpiozero.Button(self._INT, pull_up = False)
+        self._gpio_trst = gpiozero.LED(self._TRST)
+        self._gpio_int = gpiozero.Button(self._INT, pull_up = False)
 
         self._flag_t = 1
 
