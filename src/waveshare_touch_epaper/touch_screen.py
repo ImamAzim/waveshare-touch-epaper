@@ -16,7 +16,6 @@ class GT_Development:
     def __init__(self):
         self.Touch = 0
         self.TouchpointFlag = 0
-        self.Touchkeytrackid = [0, 1, 2, 3, 4]
         self.X = [0, 1, 2, 3, 4]
         self.Y = [0, 1, 2, 3, 4]
         self.S = [0, 1, 2, 3, 4]
