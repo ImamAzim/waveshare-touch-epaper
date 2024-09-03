@@ -18,8 +18,8 @@ def touch_screen():
     print('test with context manager')
     with GT1151() as gt:
         pass
-        # x, y, s = gt.input()
-    # print(f'detected touch at {x}, {y},{s}')
+        x, y, s = gt.input()
+    print(f'detected touch at {x}, {y},{s}')
 
 
 if __name__ == '__main__':
