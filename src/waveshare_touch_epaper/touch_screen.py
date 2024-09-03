@@ -84,6 +84,9 @@ class GT1151(object):
     def _i2c_writebyte(self, reg, value):
         self._bus.write_word_data(self._ADDRESS, (reg>>8) & 0xff, (reg & 0xff) | ((value & 0xff) << 8))
 
+    def _i2c_write(self, reg):
+        self._bus.write_byte_data(self._ADDRESS, (reg>>8) & 0xff, reg & 0xff)
+
     def _i2c_readbyte(self, reg, length):
         self._i2c_write(reg)
         rbuf = []
