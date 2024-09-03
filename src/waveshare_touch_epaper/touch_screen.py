@@ -174,4 +174,3 @@ class GT1151(object):
 
 if __name__ == '__main__':
     gt1151 = GT1151()
-    pass
