@@ -114,7 +114,7 @@ class GT1151(object):
             self._ready = True
         else:
             logging.exception(
-                    'touch screen has been stopped.',
+                    'touch screen has previousely been stopped.',
                     'you must recreate and instance of GT1151 and start it.')
             raise TouchEpaperException()
 
