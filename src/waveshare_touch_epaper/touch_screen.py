@@ -83,8 +83,8 @@ class GT1151(object):
         self._gpio_trst.on()
         time.sleep(0.1)
 
-    def i2c_write(reg):
-        bus.write_byte_data(address, (reg>>8) & 0xff, reg & 0xff)
+    def _i2c_write(self, reg):
+        self._bus.write_byte_data(self._ADDRESS, (reg>>8) & 0xff, reg & 0xff)
 
     def i2c_readbyte(reg, len):
         i2c_write(reg)
