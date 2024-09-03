@@ -16,7 +16,6 @@ class GT_Development:
     def __init__(self):
         self.Touch = 0
         self.TouchpointFlag = 0
-        self.TouchCount = 0
         self.Touchkeytrackid = [0, 1, 2, 3, 4]
         self.X = [0, 1, 2, 3, 4]
         self.Y = [0, 1, 2, 3, 4]
@@ -146,36 +145,38 @@ class GT1151(object):
             self._gt_dev.Touch = 0
 
             # check buffer status
-            reg = 0x814E
-            length = 1
-            buf = self._i2c_readbyte(reg, length)
+            buf = self._i2c_readbyte(reg=0x814E, length=1)
 
             if(buf[0]&0x80 == 0x00): # device note ready and data invalid
-                self._i2c_write(reg, mask) # must write 0 after coordinate read
+                self._i2c_writebyte(reg=0x814E, value=mask) # must write 0 after coordinate read
                 time.sleep(0.01)
-
             else:
-                GT_Dev.TouchpointFlag = buf[0]&0x80
-                GT_Dev.TouchCount = buf[0]&0x0f
+                self._gt_dev.TouchpointFlag = buf[0]&0x80
+                touch_count = buf[0]&0x0f
+                logging.debug('detected %s touch', touch_count)
 
-                if(GT_Dev.TouchCount > 5 or GT_Dev.TouchCount < 1):
-                    self.GT_Write(0x814E, mask)
+                if(touch_count > 5 or touch_count < 1):
+                    self._i2c_writebyte(reg=0x814E, value=mask)
                     return
 
-                buf = self.GT_Read(0x814F, GT_Dev.TouchCount*8)
-                self.GT_Write(0x814E, mask)
+                buf = self._i2c_readbyte(reg=0x814F, length=touch_count*8)
+                self._i2c_writebyte(reg=0x814E, value=mask)
 
-                GT_Old.X[0] = GT_Dev.X[0];
-                GT_Old.Y[0] = GT_Dev.Y[0];
-                GT_Old.S[0] = GT_Dev.S[0];
+                self._gt_old.X[0] = self._gt_dev.X[0];
+                self._gt_old.Y[0] = self._gt_dev.Y[0];
+                self._gt_old.S[0] = self._gt_dev.S[0];
 
-                for i in range(0, GT_Dev.TouchCount, 1):
-                    GT_Dev.Touchkeytrackid[i] = buf[0 + 8*i] 
-                    GT_Dev.X[i] = (buf[2 + 8*i] << 8) + buf[1 + 8*i]
-                    GT_Dev.Y[i] = (buf[4 + 8*i] << 8) + buf[3 + 8*i]
-                    GT_Dev.S[i] = (buf[6 + 8*i] << 8) + buf[5 + 8*i]
+                for i in range(touch_count):
+                    self._gt_dev.X[i] = (buf[2 + 8*i] << 8) + buf[1 + 8*i]
+                    self._gt_dev.Y[i] = (buf[4 + 8*i] << 8) + buf[3 + 8*i]
+                    self._gt_dev.S[i] = (buf[6 + 8*i] << 8) + buf[5 + 8*i]
 
-                print(GT_Dev.X[0], GT_Dev.Y[0], GT_Dev.S[0])
+                logging.debug(
+                        'dev pos=%s %s %s',
+                        self._gt_dev.X[0],
+                        self._gt_dev.Y[0],
+                        self._gt_dev.S[0],
+                        )
 
     def input(self):
         """scan until a touch has been detected at a new position
@@ -196,7 +197,7 @@ class GT1151(object):
                     )
 
             while not new_position:
-                self._gt.GT_Scan(self._gt_dev, self._gt_old)
+                self._gt._scan()
                 if self._gt_dev.TouchpointFlag:
                     if not (
                             self._gt_dev.X == self._gt_old.X
