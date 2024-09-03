@@ -93,12 +93,11 @@ class GT1151(object):
             rbuf.append(int(self._bus.read_byte(self._ADDRESS)))
         return rbuf
 
-    def GT_Read(self, Reg, len):
-        return config.i2c_readbyte(Reg, len)
-
-    def GT_ReadVersion(self):
-        buf = self.GT_Read(0x8140, 4)
-        print(buf)
+    def _get_product_ID(self):
+        address = 0x8140
+        length = 4
+        buf = self._i2c_readbyte(address, length)
+        logging.info('product id: %s', buf)
 
     def GT_Init(self):
         self.GT_Reset()
