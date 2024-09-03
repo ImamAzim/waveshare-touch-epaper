@@ -93,15 +93,15 @@ class GT1151(object):
             rbuf.append(int(self._bus.read_byte(self._ADDRESS)))
         return rbuf
 
-    def _get_product_ID(self):
+    def _get_product_id(self):
         address = 0x8140
         length = 4
         buf = self._i2c_readbyte(address, length)
         logging.info('product id: %s', buf)
 
-    def GT_Init(self):
-        self.GT_Reset()
-        self.GT_ReadVersion()
+    def _gt_init(self):
+        self._reset()
+        self._get_product_id()
 
     def start(self):
         """start the thread and init the touch device
@@ -110,7 +110,7 @@ class GT1151(object):
         if not self._stopped:
             self._thread_gt.start()
             logging.info("init touch screen")
-            self._GT_Init()
+            self._gt_init()
             self._ready = True
         else:
             logging.exception(
