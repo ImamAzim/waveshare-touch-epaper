@@ -199,7 +199,7 @@ class GT1151(object):
                     )
 
             while not new_position:
-                self._gt._scan()
+                self._scan()
                 if self._gt_dev.TouchpointFlag:
                     if not (
                             self._gt_dev.X == self._gt_old.X
