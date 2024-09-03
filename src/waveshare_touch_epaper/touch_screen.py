@@ -57,34 +57,31 @@ class GT1151(object):
         if not self._stopped:
             self.stop()
 
-    def _digital_read(self):
-            return self._gpio_int.value
+    # def _digital_read(self):
+            # return self._gpio_int.value
 
     def _pthread_irq(self):
         logging.info("pthread running")
         while self._flag_t == 1:
-            if self._digital_read() == 0:
+            if self._gpio_int.value == 0:
                 self._gt_dev.Touch = 1
             else:
                 self._gt_dev.Touch = 0
         logging.info("thread:exit")
 
-    def _digital_write(self, value):
-        if value:
-            self._gpio_trst.on()
-        else:
-            self._gpio_trst.off()
-
-    def _delay_ms(delaytime):
-        time.sleep(delaytime / 1000.0)
+    # def _digital_write(self, value):
+        # if value:
+            # self._gpio_trst.on()
+        # else:
+            # self._gpio_trst.off()
 
     def _reset(self):
-        self._digital_write(1)
-        self._delay_ms(100)
-        self._digital_write(0)
-        self._delay_ms(100)
-        self._digital_write(1)
-        self._delay_ms(100)
+        self._gpio_trst.on()
+        time.sleep(0.1)
+        self._gpio_trst.off()
+        time.sleep(0.1)
+        self._gpio_trst.on()
+        time.sleep(0.1)
 
     def i2c_write(reg):
         bus.write_byte_data(address, (reg>>8) & 0xff, reg & 0xff)
