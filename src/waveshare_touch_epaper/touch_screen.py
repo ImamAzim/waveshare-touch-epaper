@@ -83,8 +83,8 @@ class GT1151(object):
         self._gpio_trst.on()
         time.sleep(0.1)
 
-    def _i2c_write(self, reg):
-        self._bus.write_byte_data(self._ADDRESS, (reg>>8) & 0xff, reg & 0xff)
+    def _i2c_writebyte(self, reg, value):
+        self._bus.write_word_data(self._ADDRESS, (reg>>8) & 0xff, (reg & 0xff) | ((value & 0xff) << 8))
 
     def _i2c_readbyte(self, reg, length):
         self._i2c_write(reg)
@@ -137,6 +137,45 @@ class GT1151(object):
             msg = 'touch screen has already been stopped or not yet started.'
             logging.exception(msg)
             raise TouchEpaperException()
+
+    def _scan(self):
+        buf = []
+        mask = 0x00
+
+        if(self._gt_dev.Touch == 1):
+            self._gt_dev.Touch = 0
+
+            # check buffer status
+            reg = 0x814E
+            length = 1
+            buf = self._i2c_readbyte(reg, length)
+
+            if(buf[0]&0x80 == 0x00): # device note ready and data invalid
+                self._i2c_write(reg, mask) # must write 0 after coordinate read
+                time.sleep(0.01)
+
+            else:
+                GT_Dev.TouchpointFlag = buf[0]&0x80
+                GT_Dev.TouchCount = buf[0]&0x0f
+
+                if(GT_Dev.TouchCount > 5 or GT_Dev.TouchCount < 1):
+                    self.GT_Write(0x814E, mask)
+                    return
+
+                buf = self.GT_Read(0x814F, GT_Dev.TouchCount*8)
+                self.GT_Write(0x814E, mask)
+
+                GT_Old.X[0] = GT_Dev.X[0];
+                GT_Old.Y[0] = GT_Dev.Y[0];
+                GT_Old.S[0] = GT_Dev.S[0];
+
+                for i in range(0, GT_Dev.TouchCount, 1):
+                    GT_Dev.Touchkeytrackid[i] = buf[0 + 8*i] 
+                    GT_Dev.X[i] = (buf[2 + 8*i] << 8) + buf[1 + 8*i]
+                    GT_Dev.Y[i] = (buf[4 + 8*i] << 8) + buf[3 + 8*i]
+                    GT_Dev.S[i] = (buf[6 + 8*i] << 8) + buf[5 + 8*i]
+
+                print(GT_Dev.X[0], GT_Dev.Y[0], GT_Dev.S[0])
 
     def input(self):
         """scan until a touch has been detected at a new position
