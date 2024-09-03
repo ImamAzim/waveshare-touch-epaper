@@ -119,7 +119,7 @@ class GT1151(object):
             raise TouchEpaperException()
 
     def stop(self):
-        """close the port for the touch and finish thread
+        """close the ports and finish thread
         :returns: TODO
 
         """
@@ -128,10 +128,10 @@ class GT1151(object):
             self._flag_t = 0
             self._thread_gt.join()
             logging.info('close connection to touch screen')
-            gt1151.config.bus.close()
-            gt1151.config.GPIO_TRST.off()
-            gt1151.config.GPIO_TRST.close()
-            gt1151.config.GPIO_INT.close()
+            self._bus.close()
+            self._gpio_trst.off()
+            self._gpio_trst.close()
+            self._gpio_int.close()
             self._stopped = True
         else:
             msg = 'touch screen has already been stopped or not yet started.'
