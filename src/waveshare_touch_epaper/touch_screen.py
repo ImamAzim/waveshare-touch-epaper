@@ -161,8 +161,8 @@ class GT1151(object):
 
                 if touch_count < 6 and touch_count > 0:
 
+                    # read coordinates
                     buf = self._i2c_readbyte(reg=0x814F, length=touch_count*8)
-                    self._i2c_writebyte(reg=0x814E, value=mask)
 
                     self._x_old[0] = self._x[0]
                     self._y_old[0] = self._y[0]
