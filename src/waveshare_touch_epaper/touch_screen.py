@@ -24,7 +24,7 @@ class GT1151(object):
         self._bus = SMBus(1)
 
         self._gpio_trst = gpiozero.LED(self._TRST)
-        self._gpio_int = gpiozero.Button(self._INT, pull_up = False)
+        self._gpio_int = gpiozero.Button(self._INT, pull_up=False)
         self._int_value = 0
 
         self._x = [0] * 5
@@ -37,9 +37,6 @@ class GT1151(object):
         self._touch_detected = False
 
         self._flag_t = 1
-
-        self._gt_dev = GT_Development()
-        self._gt_old = GT_Development()
 
         self._thread_gt = threading.Thread(target=self._pthread_irq)
         self._thread_gt.setDaemon(True)
@@ -55,9 +52,6 @@ class GT1151(object):
         if not self._stopped:
             self.stop()
 
-    # def _digital_read(self):
-            # return self._gpio_int.value
-
     def _pthread_irq(self):
         logging.info("pthread running")
         while self._flag_t == 1:
@@ -66,12 +60,6 @@ class GT1151(object):
             else:
                 self._int_value = 0
         logging.info("thread:exit")
-
-    # def _digital_write(self, value):
-        # if value:
-            # self._gpio_trst.on()
-        # else:
-            # self._gpio_trst.off()
 
     def _reset(self):
         self._gpio_trst.on()
