@@ -183,7 +183,7 @@ class GT1151(object):
                             )
                 else:
                     logging.debug('wrong number of touch detected')
-            self._i2c_writebyte(reg=0x814E, value=mask)
+            self._i2c_writebyte(reg=0x814E, value=mask)  # must write 0 after coordinate read
 
     def input(self):
         """scan until a touch has been detected at a new position
