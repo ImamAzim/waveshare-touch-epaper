@@ -11,12 +11,6 @@ class TouchEpaperException(Exception):
     pass
 
 
-class GT_Development:
-    """ internal class to keep track of touchscreen state """
-    def __init__(self):
-        self.TouchpointFlag = 0
-
-
 class GT1151(object):
 
     """touch screen part of the 2.13 inch touch epaper display"""
@@ -39,6 +33,8 @@ class GT1151(object):
         self._x_old = [0] * 5
         self._y_old = [0] * 5
         self._s_old = [0] * 5
+
+        self._touch_detected = False
 
         self._flag_t = 1
 
@@ -153,14 +149,14 @@ class GT1151(object):
         if(self._int_value == 1):
             self._int_value = 0
 
-            # check buffer status
+            # read coordinate informations
             buf = self._i2c_readbyte(reg=0x814E, length=1)
+            buffer_status = buf[0]&0x80
 
-            if(buf[0]&0x80 == 0x00): # device note ready and data invalid
+            if(buffer_status == 0x00): # device note ready and data invalid
                 self._i2c_writebyte(reg=0x814E, value=mask) # must write 0 after coordinate read
                 time.sleep(0.01)
-            else:
-                self._gt_dev.TouchpointFlag = buf[0]&0x80
+            else: # coordinates ready to be read
                 touch_count = buf[0]&0x0f
                 logging.debug('detected %s touch', touch_count)
 
@@ -180,6 +176,8 @@ class GT1151(object):
                     self._y[i] = (buf[4 + 8*i] << 8) + buf[3 + 8*i]
                     self._s[i] = (buf[6 + 8*i] << 8) + buf[5 + 8*i]
 
+                self._touch_detected = True
+
                 logging.debug(
                         'dev pos=%s %s %s',
                         self._x[0],
@@ -196,13 +194,13 @@ class GT1151(object):
             new_position = False
             while not new_position:
                 self._scan()
-                if self._gt_dev.TouchpointFlag:
+                if self._touch_detected:
                     if not (
                             self._x == self._x_old
                             and self._y == self._y_old
                             ):
                         new_position = True
-            self._gt_dev.TouchpointFlag = 0
+                    self._touch_detected = False
             return self._x[0], self._y[0], self._y[0]
         else:
             msg = 'touch screen has already been stopped or not yet started.'
