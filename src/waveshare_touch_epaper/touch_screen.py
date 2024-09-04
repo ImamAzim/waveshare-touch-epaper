@@ -35,6 +35,7 @@ class GT1151(object):
 
         self._gpio_trst = gpiozero.LED(self._TRST)
         self._gpio_int = gpiozero.Button(self._INT, pull_up = False)
+        self._int_value = 0
 
         self._flag_t = 1
 
@@ -62,9 +63,9 @@ class GT1151(object):
         logging.info("pthread running")
         while self._flag_t == 1:
             if self._gpio_int.value == 0:
-                self._gt_dev.Touch = 1
+                self._int_value = 1
             else:
-                self._gt_dev.Touch = 0
+                self._int_value = 0
         logging.info("thread:exit")
 
     # def _digital_write(self, value):
@@ -143,8 +144,8 @@ class GT1151(object):
         buf = []
         mask = 0x00
 
-        if(self._gt_dev.Touch == 1):
-            self._gt_dev.Touch = 0
+        if(self._int_value == 1):
+            self._int_value = 0
 
             # check buffer status
             buf = self._i2c_readbyte(reg=0x814E, length=1)
@@ -187,7 +188,6 @@ class GT1151(object):
         """
         if not self._stopped and self._ready:
             new_position = False
-            logging.debug('gt_dev.touch=%s', self._gt_dev.Touch)
             logging.debug(
                     'old pos=%s %s %s, dev pos=%s %s %s',
                     self._gt_old.X[0],
