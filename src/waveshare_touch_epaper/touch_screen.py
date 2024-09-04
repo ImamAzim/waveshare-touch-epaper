@@ -169,7 +169,7 @@ class GT1151(object):
                     self._s_old[0] = self._s[0];
 
                     for i in range(touch_count):
-                        self._x[i] = (buf[2 + 8*i] << 8) + buf[1 + 8*i]
+                        self._x[i] = (buf[2 + 8*i] << 8) + buf[1 + 8*i]  #  add high and low bytes
                         self._y[i] = (buf[4 + 8*i] << 8) + buf[3 + 8*i]
                         self._s[i] = (buf[6 + 8*i] << 8) + buf[5 + 8*i]
 
