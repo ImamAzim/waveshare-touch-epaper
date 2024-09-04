@@ -14,11 +14,7 @@ class TouchEpaperException(Exception):
 class GT_Development:
     """ internal class to keep track of touchscreen state """
     def __init__(self):
-        self.Touch = 0
         self.TouchpointFlag = 0
-        self.X = [0, 1, 2, 3, 4]
-        self.Y = [0, 1, 2, 3, 4]
-        self.S = [0, 1, 2, 3, 4]
 
 
 class GT1151(object):
@@ -36,6 +32,13 @@ class GT1151(object):
         self._gpio_trst = gpiozero.LED(self._TRST)
         self._gpio_int = gpiozero.Button(self._INT, pull_up = False)
         self._int_value = 0
+
+        self._x = [0] * 5
+        self._y = [0] * 5
+        self._s = [0] * 5
+        self._x_old = [0] * 5
+        self._y_old = [0] * 5
+        self._s_old = [0] * 5
 
         self._flag_t = 1
 
@@ -141,6 +144,9 @@ class GT1151(object):
             raise TouchEpaperException()
 
     def _scan(self):
+        """
+        scan and assign touch coordinates (up to 5 points) to _x _y and _s attributes
+        """
         buf = []
         mask = 0x00
 
@@ -165,49 +171,39 @@ class GT1151(object):
                 buf = self._i2c_readbyte(reg=0x814F, length=touch_count*8)
                 self._i2c_writebyte(reg=0x814E, value=mask)
 
-                self._gt_old.X[0] = self._gt_dev.X[0];
-                self._gt_old.Y[0] = self._gt_dev.Y[0];
-                self._gt_old.S[0] = self._gt_dev.S[0];
+                self._x_old[0] = self._x[0]
+                self._y_old[0] = self._y[0]
+                self._s_old[0] = self._s[0];
 
                 for i in range(touch_count):
-                    self._gt_dev.X[i] = (buf[2 + 8*i] << 8) + buf[1 + 8*i]
-                    self._gt_dev.Y[i] = (buf[4 + 8*i] << 8) + buf[3 + 8*i]
-                    self._gt_dev.S[i] = (buf[6 + 8*i] << 8) + buf[5 + 8*i]
+                    self._x[i] = (buf[2 + 8*i] << 8) + buf[1 + 8*i]
+                    self._y[i] = (buf[4 + 8*i] << 8) + buf[3 + 8*i]
+                    self._s[i] = (buf[6 + 8*i] << 8) + buf[5 + 8*i]
 
                 logging.debug(
                         'dev pos=%s %s %s',
-                        self._gt_dev.X[0],
-                        self._gt_dev.Y[0],
-                        self._gt_dev.S[0],
+                        self._x[0],
+                        self._y[0],
+                        self._s[0],
                         )
 
     def input(self):
         """scan until a touch has been detected at a new position
-        :returns: X, Y, S coordinates of touch
+        :returns: X, Y, S coordinates of one touch
 
         """
         if not self._stopped and self._ready:
             new_position = False
-            logging.debug(
-                    'old pos=%s %s %s, dev pos=%s %s %s',
-                    self._gt_old.X[0],
-                    self._gt_old.Y[0],
-                    self._gt_old.S[0],
-                    self._gt_dev.X[0],
-                    self._gt_dev.Y[0],
-                    self._gt_dev.S[0],
-                    )
-
             while not new_position:
                 self._scan()
                 if self._gt_dev.TouchpointFlag:
                     if not (
-                            self._gt_dev.X == self._gt_old.X
-                            and self._gt_dev.Y == self._gt_old.Y
+                            self._x == self._x_old
+                            and self._y == self._y_old
                             ):
                         new_position = True
             self._gt_dev.TouchpointFlag = 0
-            return self._gt_dev.X[0], self._gt_dev.Y[0], self._gt_dev.S[0]
+            return self._x[0], self._y[0], self._y[0]
         else:
             msg = 'touch screen has already been stopped or not yet started.'
             logging.exception(msg)
