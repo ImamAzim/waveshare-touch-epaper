@@ -86,11 +86,11 @@ class GT1151(object):
     def _get_bits(self, value, first_bit, last_bit=None):
         if last_bit is None:
             last_bit = first_bit
-            shift = first_bit
-            nbits = last_bit - first_bit + 1
-            mask = 2 ** nbits - 1
-            bits = (value >> shift) & mask
-            return bits
+        shift = first_bit
+        nbits = last_bit - first_bit + 1
+        mask = 2 ** nbits - 1
+        bits = (value >> shift) & mask
+        return bits
 
     def _i2c_readbyte(self, reg, length):
         self._i2c_write(reg)
