@@ -166,23 +166,28 @@ class GT1151(object):
             if buffer_status == 0:  # device note ready and data invalid
                 time.sleep(0.01)
             else:  # coordinates ready to be read
-                touch_count = self._get_bits(buffer, 0 3)
-                logging.debug('detected %s touch', touch_count)
+                n_touch_points = self._get_bits(buffer, 0 3)
+                logging.debug('detected %s touch', n_touch_points)
 
-                if touch_count < 6 and touch_count > 0:
+                if n_touch_points > 0:
 
                     # read coordinates
-                    buf = self._i2c_readbyte(reg=0x814F, length=touch_count*8)
+                    buf = self._i2c_readbyte(reg=0x814F, length=n_touch_points*8)
 
                     self._x_old[0] = self._x[0]
                     self._y_old[0] = self._y[0]
                     self._s_old[0] = self._s[0]
 
-                    for i in range(touch_count):
-                        # add high and low bytes
-                        self._x[i] = (buf[2 + 8*i] << 8) + buf[1 + 8*i]
-                        self._y[i] = (buf[4 + 8*i] << 8) + buf[3 + 8*i]
-                        self._s[i] = (buf[6 + 8*i] << 8) + buf[5 + 8*i]
+                    for i in range(n_touch_points):
+                        low_byte_x = buf[1+8*i]
+                        high_byte_x = buf[2+8*i]
+                        low_byte_y = buf[3+8*i]
+                        high_byte_y = buf[4+8*i]
+                        low_byte_s = buf[5+8*i]
+                        high_byte_s = buf[6+8*i]
+                        self._x[i] = self._add_lo_hi_bytes(low_byte_x, high_byte_x)
+                        self._y[i] = self._add_lo_hi_bytes(low_byte_y, high_byte_y)
+                        self._s[i] = self._add_lo_hi_bytes(low_byte_s, high_byte_s)
 
                     self._touch_detected = True
 
@@ -194,7 +199,7 @@ class GT1151(object):
                             )
                 else:
                     logging.debug('wrong number of touch detected')
-                    # must write 0 after coordinate read
+            # must write 0 after coordinate read
             self._i2c_writebyte(reg=0x814E, value=mask)
 
     def input(self):
