@@ -166,7 +166,7 @@ class GT1151(object):
             if buffer_status == 0:  # device note ready and data invalid
                 time.sleep(0.01)
             else:  # coordinates ready to be read
-                n_touch_points = self._get_bits(buffer, 0 3)
+                n_touch_points = self._get_bits(buffer, 0, 3)
                 logging.debug('detected %s touch', n_touch_points)
 
                 if n_touch_points > 0:
