@@ -26,6 +26,8 @@ class GT1151(object):
         self._gpio_trst = gpiozero.LED(self._TRST)
         self._gpio_int = gpiozero.Button(self._INT, pull_up=False)
         self._int_value = 0
+        self._gpio_int.when_pressed = lambda :setattr(self, '_int_value', 0)
+        self._gpio_int.when_released = lambda :setattr(self, '_int_value', 1)
 
         self._x = [0] * 5
         self._y = [0] * 5
@@ -36,10 +38,9 @@ class GT1151(object):
 
         self._touch_detected = False
 
-        self._flag_t = 1
-
-        self._thread_gt = threading.Thread(target=self._pthread_irq)
-        self._thread_gt.setDaemon(True)
+        # self._flag_t = 1
+        # self._thread_gt = threading.Thread(target=self._pthread_irq)
+        # self._thread_gt.setDaemon(True)
 
         self._ready = False
         self._stopped = False
@@ -52,14 +53,14 @@ class GT1151(object):
         if not self._stopped:
             self.stop()
 
-    def _pthread_irq(self):
-        logging.info("pthread running")
-        while self._flag_t == 1:
-            if self._gpio_int.value == 0:
-                self._int_value = 1
-            else:
-                self._int_value = 0
-        logging.info("thread:exit")
+    # def _pthread_irq(self):
+        # logging.info("pthread running")
+        # while self._flag_t == 1:
+            # if self._gpio_int.value == 0:
+                # self._int_value = 1
+            # else:
+                # self._int_value = 0
+        # logging.info("thread:exit")
 
     def _reset(self):
         self._gpio_trst.on()
@@ -118,7 +119,7 @@ class GT1151(object):
 
         """
         if not self._stopped:
-            self._thread_gt.start()
+            # self._thread_gt.start()
             logging.info("init touch screen")
             self._gt_init()
             self._ready = True
@@ -135,8 +136,8 @@ class GT1151(object):
         """
 
         if not self._stopped and self._ready:
-            self._flag_t = 0
-            self._thread_gt.join()
+            # self._flag_t = 0
+            # self._thread_gt.join()
             logging.info('close connection to touch screen')
             self._bus.close()
             self._gpio_trst.off()
