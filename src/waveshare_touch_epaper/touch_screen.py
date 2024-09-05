@@ -99,7 +99,9 @@ class GT1151(object):
             rbuf.append(int(self._bus.read_byte(self._ADDRESS)))
         return rbuf
 
-    
+    def _add_lo_hi_bytes(self, low_byte, high_byte):
+        new_byte = (high_byte << len(low_byte)) + low_byte
+        return new_byte
 
     def _get_product_id(self):
         address = 0x8140
