@@ -100,7 +100,7 @@ class GT1151(object):
         return rbuf
 
     def _add_lo_hi_bytes(self, low_byte, high_byte, nbits=8):
-        new_byte = (high_byte << nbits + low_byte
+        new_byte = (high_byte << nbits) + low_byte
         return new_byte
 
     def _get_product_id(self):
