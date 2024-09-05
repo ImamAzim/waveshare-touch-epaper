@@ -99,6 +99,8 @@ class GT1151(object):
             rbuf.append(int(self._bus.read_byte(self._ADDRESS)))
         return rbuf
 
+    
+
     def _get_product_id(self):
         address = 0x8140
         length = 4
@@ -157,12 +159,12 @@ class GT1151(object):
 
             # read coordinate informations
             buf = self._i2c_readbyte(reg=0x814E, length=1)
-            buffer_status = self._get_bits()
+            buffer_status = self._get_bits(buf, 7)
 
-            if buffer_status == 0x00:  # device note ready and data invalid
+            if buffer_status == 0:  # device note ready and data invalid
                 time.sleep(0.01)
             else:  # coordinates ready to be read
-                touch_count = buf[0] & 0x0f
+                touch_count = self._get_bits(buffer, 0 3)
                 logging.debug('detected %s touch', touch_count)
 
                 if touch_count < 6 and touch_count > 0:
