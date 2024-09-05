@@ -142,7 +142,7 @@ class GT1151(object):
         mask = 0x00
 
         if self._int_value == 1:
-            self._int_value = 0
+            self._int_value = 0  # maybe not necessary?
 
             # read coordinate informations
             buf = self._i2c_readbyte(reg=0x814E, length=1)
