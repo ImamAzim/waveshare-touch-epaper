@@ -83,7 +83,7 @@ class GT1151(object):
                 reg & 0xff,
                 )
 
-    def _get_bits(value, first_bit, last_bit=None):
+    def _get_bits(self, value, first_bit, last_bit=None):
         if last_bit is None:
             last_bit = first_bit
             shift = first_bit
@@ -157,7 +157,7 @@ class GT1151(object):
 
             # read coordinate informations
             buf = self._i2c_readbyte(reg=0x814E, length=1)
-            buffer_status = buf[0] & 0x80
+            buffer_status = self._get_bits()
 
             if buffer_status == 0x00:  # device note ready and data invalid
                 time.sleep(0.01)
