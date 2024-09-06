@@ -1,5 +1,6 @@
 import time
 import logging
+from threading import RLock
 
 
 from smbus3 import SMBus
@@ -43,6 +44,7 @@ class GT1151(object):
         self._s_old = [0] * 10
 
         self._stopped = False
+        self._coordinates_lock = RLock()
 
     def __enter__(self):
         self._enter_normal_mode()
@@ -151,6 +153,16 @@ class GT1151(object):
         else:
             logging.debug('no need to process')
 
+    def _has_touch_moved(self):
+        with self._coordinates_lock:
+            if (
+                    self._x_old[0] == self._x[0] and
+                    self._y_old[0] == self._y[0] and
+                    ):
+                return False
+            else:
+                return True
+
     def _read_coordinates(self, n_touch_points):
 
         logging.debug('read coordinates')
@@ -158,22 +170,23 @@ class GT1151(object):
                 self._REGISTER['coordinates_values'],
                 length=n_touch_points*8)
 
-        # store old value
-        self._x_old[0] = self._x[0]
-        self._y_old[0] = self._y[0]
-        self._s_old[0] = self._s[0]
+        with self._coordinates_lock:
+            # store old values
+            self._x_old[0] = self._x[0]
+            self._y_old[0] = self._y[0]
+            self._s_old[0] = self._s[0]
 
-        # get new coord and assign
-        for i in range(n_touch_points):
-            low_byte_x = buf[1+8*i]
-            high_byte_x = buf[2+8*i]
-            low_byte_y = buf[3+8*i]
-            high_byte_y = buf[4+8*i]
-            low_byte_s = buf[5+8*i]
-            high_byte_s = buf[6+8*i]
-            self._x[i] = self._add_lo_hi_bytes(low_byte_x, high_byte_x)
-            self._y[i] = self._add_lo_hi_bytes(low_byte_y, high_byte_y)
-            self._s[i] = self._add_lo_hi_bytes(low_byte_s, high_byte_s)
+            # get new coord and assign
+            for i in range(n_touch_points):
+                low_byte_x = buf[1+8*i]
+                high_byte_x = buf[2+8*i]
+                low_byte_y = buf[3+8*i]
+                high_byte_y = buf[4+8*i]
+                low_byte_s = buf[5+8*i]
+                high_byte_s = buf[6+8*i]
+                self._x[i] = self._add_lo_hi_bytes(low_byte_x, high_byte_x)
+                self._y[i] = self._add_lo_hi_bytes(low_byte_y, high_byte_y)
+                self._s[i] = self._add_lo_hi_bytes(low_byte_s, high_byte_s)
 
         logging.debug(
                 'new coordinates=%s %s %s',
