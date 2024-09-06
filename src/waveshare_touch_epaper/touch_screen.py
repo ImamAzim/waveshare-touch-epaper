@@ -195,9 +195,6 @@ class GT1151(object):
                 self._y[0],
                 self._s[0],
                 )
-        # must write 0 after coordinate read
-        logging.debug('write 0 to register because coordinate read')
-        self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
 
     def _process_coordinate_reading(self, triggered=True):
         """
@@ -231,6 +228,10 @@ class GT1151(object):
                 logging.debug('detected %s touch', n_touch_points)
                 if n_touch_points > 0:
                     self._read_coordinates(n_touch_points)
+
+        # must write 0 after coordinate read
+        logging.debug('write 0 to coord info')
+        self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
 
     def input(self):
         """ wait for touch and different from previous
