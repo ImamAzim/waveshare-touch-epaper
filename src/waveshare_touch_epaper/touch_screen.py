@@ -33,7 +33,6 @@ class GT1151(object):
         self._y_old = [0] * 10
         self._s_old = [0] * 10
 
-
         self._stopped = False
 
     def __enter__(self):
@@ -206,8 +205,6 @@ class GT1151(object):
                 logging.debug('detected %s touch', n_touch_points)
                 if n_touch_points > 0:
                     self._read_coordinates(n_touch_points)
-                else:
-                    logging.debug('wrong number of touch detected')
 
     def input(self):
         """scan until a touch has been detected at a new position
