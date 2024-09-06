@@ -138,9 +138,12 @@ class GT1151(object):
             raise TouchEpaperException()
 
     def _answer_to_FW_request(self):
+
         logging.debug('there is a FW request')
+
         buf = self._i2c_readbyte(reg=0x8044, length=1)
         request = buf[0]
+
         if request == 0x01:
             logging.debug('request for master to send configuration information')
             logging.debug('feature not implemented. I do nothing')
@@ -150,10 +153,42 @@ class GT1151(object):
         else:
             logging.debug('no need to process')
 
-    def _read_coordinates(self, triggered=True):
+    def _read_coordinates(self, n_touch_points):
+
+        logging.debug('read coordinates')
+        buf = self._i2c_readbyte(reg=0x814F, length=n_touch_points*8)
+
+        # store old value
+        self._x_old[0] = self._x[0]
+        self._y_old[0] = self._y[0]
+        self._s_old[0] = self._s[0]
+
+        # get new coord and assign
+        for i in range(n_touch_points):
+            low_byte_x = buf[1+8*i]
+            high_byte_x = buf[2+8*i]
+            low_byte_y = buf[3+8*i]
+            high_byte_y = buf[4+8*i]
+            low_byte_s = buf[5+8*i]
+            high_byte_s = buf[6+8*i]
+            self._x[i] = self._add_lo_hi_bytes(low_byte_x, high_byte_x)
+            self._y[i] = self._add_lo_hi_bytes(low_byte_y, high_byte_y)
+            self._s[i] = self._add_lo_hi_bytes(low_byte_s, high_byte_s)
+
+        logging.debug(
+                'new coordinates=%s %s %s',
+                self._x[0],
+                self._y[0],
+                self._s[0],
+                )
+        # must write 0 after coordinate read
+        logging.debug('write 0 to register because coordinate read')
+        self._i2c_writebyte(reg=0x814E, value=mask)
+
+    def _process_coordinate_reading(self, triggered=True):
         """
-        read coordinates and assign coordinates
-        to _x _y and _s attributes
+        follow the process of coordinate reading
+        :triggered: True if triggered by int, false if polling
         """
         if triggered:
             logging.debug('INT has been pressed!')
@@ -165,10 +200,11 @@ class GT1151(object):
         last_iteration = False
         while last_iteration is not True:
             last_iteration = True
-            # read coordinate informations
+
             logging.debug('check buffer status')
             buf = self._i2c_readbyte(reg=0x814E, length=1)
             buffer_status = self._get_bits(buf[0], 7)
+            n_touch_points = self._get_bits(buf[0], 0, 3)
 
             if buffer_status == 0:  # device note ready and data invalid
                 if triggered:
@@ -177,40 +213,12 @@ class GT1151(object):
                     logging.debug('device not ready, wait 10ms')
                     time.sleep(0.01)
                     last_iteration = False
-            else:  # coordinates ready to be read
-                n_touch_points = self._get_bits(buf[0], 0, 3)
+            else:
                 logging.debug('detected %s touch', n_touch_points)
-
                 if n_touch_points > 0:
-
-                    # read coordinates
-                    buf = self._i2c_readbyte(reg=0x814F, length=n_touch_points*8)
-
-                    self._x_old[0] = self._x[0]
-                    self._y_old[0] = self._y[0]
-                    self._s_old[0] = self._s[0]
-
-                    for i in range(n_touch_points):
-                        low_byte_x = buf[1+8*i]
-                        high_byte_x = buf[2+8*i]
-                        low_byte_y = buf[3+8*i]
-                        high_byte_y = buf[4+8*i]
-                        low_byte_s = buf[5+8*i]
-                        high_byte_s = buf[6+8*i]
-                        self._x[i] = self._add_lo_hi_bytes(low_byte_x, high_byte_x)
-                        self._y[i] = self._add_lo_hi_bytes(low_byte_y, high_byte_y)
-                        self._s[i] = self._add_lo_hi_bytes(low_byte_s, high_byte_s)
-
-                    logging.debug(
-                            'dev pos=%s %s %s',
-                            self._x[0],
-                            self._y[0],
-                            self._s[0],
-                            )
+                    self._read_coordinates(n_touch_points)
                 else:
                     logging.debug('wrong number of touch detected')
-            # must write 0 after coordinate read
-            self._i2c_writebyte(reg=0x814E, value=mask)
 
     def input(self):
         """scan until a touch has been detected at a new position
