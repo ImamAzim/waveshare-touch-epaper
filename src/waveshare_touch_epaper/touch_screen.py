@@ -95,7 +95,10 @@ class GT1151(object):
         address = 0x8140
         length = 4
         buf = self._i2c_readbyte(address, length)
-        logging.info('product id: %s', buf)
+        product_id = ''
+        for el in buf:
+            product_id = product_id + chr(el)
+        logging.info('product id: %s', product_id)
 
     def _gt_init(self):
         self._reset()
