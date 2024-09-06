@@ -61,6 +61,7 @@ class GT1151(object):
             self.stop()
 
     def _reset(self):
+        self._gpio_int.when_pressed = None
         self._gpio_trst.on()
         time.sleep(0.1)
         self._gpio_trst.off()
