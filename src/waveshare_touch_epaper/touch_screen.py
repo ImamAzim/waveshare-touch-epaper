@@ -45,6 +45,7 @@ class GT1151(object):
 
         self._stopped = False
         self._coordinates_lock = RLock()
+        self._mode = None
 
     def __enter__(self):
         self._enter_normal_mode()
@@ -115,6 +116,7 @@ class GT1151(object):
         logging.debug('enter normal mode')
         self._reset()
         self._gpio_int.when_pressed = self._process_coordinate_reading
+        self._mode = 'normal'
 
     def stop(self):
         """ enter sleep mode and close the ports
@@ -148,7 +150,6 @@ class GT1151(object):
             logging.debug('feature not implemented. I do nothing')
         elif request == 0x03:
             logging.debug('request master to reset.')
-            logging.debug('i enter normal mode, assuming I was there')
             self._enter_normal_mode()
         else:
             logging.debug('no need to process')
@@ -232,24 +233,19 @@ class GT1151(object):
                     self._read_coordinates(n_touch_points)
 
     def input(self):
-        """scan until a touch has been detected at a new position
+        """ wait for touch and different from previous
         :returns: X, Y, S coordinates of one touch
 
         """
-        if not self._stopped and self._ready:
-            new_position = False
-            while not new_position:
-                self._scan()
-                if self._touch_detected:
-                    if not (
-                            self._x == self._x_old
-                            and self._y == self._y_old
-                            ):
-                        new_position = True
-                    self._touch_detected = False
-            return self._x[0], self._y[0], self._y[0]
+        if not self._stopped:
+            if self._mode == 'normal':
+                pass
+            else:
+                msg = 'device is not in normal mode'
+                logging.exception(msg)
+                raise TouchEpaperException()
         else:
-            msg = 'touch screen has already been stopped or not yet started.'
+            msg = 'touch screen has already been stopped.'
             logging.exception(msg)
             raise TouchEpaperException()
 
