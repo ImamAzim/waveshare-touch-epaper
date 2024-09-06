@@ -218,6 +218,10 @@ class GT1151(object):
             n_touch_points = self._get_bits(buf[0], 0, 3)
 
             if buffer_status == 0:  # device note ready and data invalid
+
+                logging.debug('write 0 to coord info')
+                self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
+
                 if triggered:
                     self._answer_to_FW_request()
                 else:
@@ -228,10 +232,10 @@ class GT1151(object):
                 logging.debug('detected %s touch', n_touch_points)
                 if n_touch_points > 0:
                     self._read_coordinates(n_touch_points)
+                logging.debug('write 0 to coord info')
+                self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
 
-        # must write 0 after coordinate read
-        logging.debug('write 0 to coord info')
-        self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
+
 
     def input(self):
         """ wait for touch and different from previous
