@@ -26,16 +26,14 @@ class GT1151(object):
         self._gpio_trst = gpiozero.LED(self._TRST)
         self._gpio_int = gpiozero.Button(self._INT, pull_up=False)
 
-        self._x = [0] * 5
-        self._y = [0] * 5
-        self._s = [0] * 5
-        self._x_old = [0] * 5
-        self._y_old = [0] * 5
-        self._s_old = [0] * 5
+        self._x = [0] * 10
+        self._y = [0] * 10
+        self._s = [0] * 10
+        self._x_old = [0] * 10
+        self._y_old = [0] * 10
+        self._s_old = [0] * 10
 
-        self._touch_detected = False
 
-        self._ready = False
         self._stopped = False
 
     def __enter__(self):
@@ -110,20 +108,21 @@ class GT1151(object):
 
 
     def stop(self):
-        """close the ports
-        :returns: TODO
+        """ enter sleep mode and close the ports
 
         """
 
-        if not self._stopped and self._ready:
-            logging.info('close connection to touch screen')
+        if not self._stopped:
+            self._reset()
+            logging.debug('TODO: enter sleep mode')
+            logging.info('close connections to touch screen')
             self._bus.close()
             self._gpio_trst.off()
             self._gpio_trst.close()
             self._gpio_int.close()
             self._stopped = True
         else:
-            msg = 'touch screen has already been stopped or not yet started.'
+            msg = 'touch screen has already been stopped'
             logging.exception(msg)
             raise TouchEpaperException()
 
