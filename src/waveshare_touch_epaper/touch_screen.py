@@ -145,8 +145,9 @@ class GT1151(object):
                     'request for master to send configuration information')
             logging.debug('feature not implemented. I do nothing')
         elif request == 0x03:
-            logging.debug('request master to reset')
-            self._reset()
+            logging.debug('request master to reset.')
+            logging.debug('i enter normal mode, assuming I was there')
+            self._enter_normal_mode()
         else:
             logging.debug('no need to process')
 
