@@ -237,17 +237,22 @@ class GT1151(object):
         :returns: X, Y, S coordinates of one touch
 
         """
-        if not self._stopped:
-            if self._mode == 'normal':
-                pass
-            else:
-                msg = 'device is not in normal mode'
-                logging.exception(msg)
-                raise TouchEpaperException()
-        else:
+
+        if self._stopped:
             msg = 'touch screen has already been stopped.'
             logging.exception(msg)
             raise TouchEpaperException()
+
+        if not self._mode == 'normal':
+            msg = 'device is not in normal mode'
+            logging.exception(msg)
+            raise TouchEpaperException()
+
+        while True:
+            self._gpio_int.wait_for_press()
+            if self._has_touch_moved():
+                break
+        return self._x[0], self._y[0], self._s[0]
 
 
 if __name__ == '__main__':
