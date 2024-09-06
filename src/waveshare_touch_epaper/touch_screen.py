@@ -25,9 +25,6 @@ class GT1151(object):
 
         self._gpio_trst = gpiozero.LED(self._TRST)
         self._gpio_int = gpiozero.Button(self._INT, pull_up=False)
-        self._int_value = 0
-        self._gpio_int.when_pressed = lambda :setattr(self, '_int_value', 0)
-        self._gpio_int.when_released = lambda :setattr(self, '_int_value', 1)
 
         self._x = [0] * 5
         self._y = [0] * 5
@@ -42,8 +39,16 @@ class GT1151(object):
         self._stopped = False
 
     def __enter__(self):
-        self.start()
+        self._enter_normal_mode()
+        self._get_product_id()
         return self
+
+    def start(self):
+        """ enter the normal mode
+
+        """
+        self._enter_normal_mode()
+        self._get_product_id()
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         if not self._stopped:
@@ -98,26 +103,11 @@ class GT1151(object):
         product_id = ''.join(chr(el) for el in buf)
         logging.info('product id: %s', product_id)
 
-    def _gt_init(self):
-        self._reset()
-        self._get_product_id()
-
     def _enter_normal_mode(self):
+        logging.debug('enter normal mode')
         self._reset()
+        self._gpio_int.when_pressed = self._process_coordinate_reading
 
-    def start(self):
-        """ reset the touch screen
-
-        """
-        if not self._stopped:
-            logging.info("init touch screen")
-            self._gt_init()
-            self._ready = True
-        else:
-            logging.exception(
-                    'touch screen has previousely been stopped.',
-                    'you must recreate and instance of GT1151 and start it.')
-            raise TouchEpaperException()
 
     def stop(self):
         """close the ports
