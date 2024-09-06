@@ -18,6 +18,16 @@ class GT1151(object):
     _TRST = 22
     _INT = 27
     _ADDRESS = 0x14
+    _REGISTER = dict(
+            command=0x8040,
+            command_data=0x8041,
+            command_checksum=0x8042,
+            fw_request=0x8044,
+            coordinates_info=0x814E,
+            coordinates_values=0x814F,
+            product_id=0x8140,
+            gesture_type=0x814C,
+            )
 
     def __init__(self):
 
@@ -94,9 +104,8 @@ class GT1151(object):
         return new_byte
 
     def _get_product_id(self):
-        address = 0x8140
         length = 4
-        buf = self._i2c_readbyte(address, length)
+        buf = self._i2c_readbyte(self._REGISTER['product_id'], length)
         product_id = ''.join(chr(el) for el in buf)
         logging.info('product id: %s', product_id)
 
@@ -129,7 +138,7 @@ class GT1151(object):
 
         logging.debug('there is a FW request')
 
-        buf = self._i2c_readbyte(reg=0x8044, length=1)
+        buf = self._i2c_readbyte(self._REGISTER['fw_request'], length=1)
         request = buf[0]
 
         if request == 0x01:
@@ -144,7 +153,7 @@ class GT1151(object):
     def _read_coordinates(self, n_touch_points):
 
         logging.debug('read coordinates')
-        buf = self._i2c_readbyte(reg=0x814F, length=n_touch_points*8)
+        buf = self._i2c_readbyte(self._REGISTER['coordinates_values'], length=n_touch_points*8)
 
         # store old value
         self._x_old[0] = self._x[0]
@@ -171,7 +180,7 @@ class GT1151(object):
                 )
         # must write 0 after coordinate read
         logging.debug('write 0 to register because coordinate read')
-        self._i2c_writebyte(reg=0x814E, value=mask)
+        self._i2c_writebyte(self._REGISTER['coordinates_info'], value=mask)
 
     def _process_coordinate_reading(self, triggered=True):
         """
@@ -190,7 +199,7 @@ class GT1151(object):
             last_iteration = True
 
             logging.debug('check buffer status')
-            buf = self._i2c_readbyte(reg=0x814E, length=1)
+            buf = self._i2c_readbyte(self._REGISTER['coordinates_info'], length=1)
             buffer_status = self._get_bits(buf[0], 7)
             n_touch_points = self._get_bits(buf[0], 0, 3)
 
