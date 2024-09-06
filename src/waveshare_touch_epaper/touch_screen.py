@@ -102,6 +102,9 @@ class GT1151(object):
         self._reset()
         self._get_product_id()
 
+    def _enter_normal_mode(self):
+        self._reset()
+
     def start(self):
         """ reset the touch screen
 
@@ -134,23 +137,46 @@ class GT1151(object):
             logging.exception(msg)
             raise TouchEpaperException()
 
-    def _scan(self):
+    def _answer_to_FW_request(self):
+        logging.debug('there is a FW request')
+        buf = self._i2c_readbyte(reg=0x8044, length=1)
+        request = buf[0]
+        if request == 0x01:
+            logging.debug('request for master to send configuration information')
+            logging.debug('feature not implemented. I do nothing')
+        elif request == 0x03:
+            logging.debug('request master to reset')
+            self._reset()
+        else:
+            logging.debug('no need to process')
+
+    def _read_coordinates(self, triggered=True):
         """
-        scan and assign touch coordinates (up to 5 points)
+        read coordinates and assign coordinates
         to _x _y and _s attributes
         """
+        if triggered:
+            logging.debug('INT has been pressed!')
+        else:
+            logging.debug('polling..')
         buf = []
         mask = 0x00
 
-        if self._int_value == 1:
-            self._int_value = 0  # maybe not necessary?
-
+        last_iteration = False
+        while last_iteration is not True:
+            last_iteration = True
             # read coordinate informations
+            logging.debug('check buffer status')
             buf = self._i2c_readbyte(reg=0x814E, length=1)
             buffer_status = self._get_bits(buf[0], 7)
 
             if buffer_status == 0:  # device note ready and data invalid
-                time.sleep(0.01)
+                if triggered:
+                    self._answer_to_FW_request()
+                else:
+                    logging.debug('device not ready, wait 10ms')
+                    time.sleep(0.01)
+                    last_iteration = False
             else:  # coordinates ready to be read
                 n_touch_points = self._get_bits(buf[0], 0, 3)
                 logging.debug('detected %s touch', n_touch_points)
@@ -174,8 +200,6 @@ class GT1151(object):
                         self._x[i] = self._add_lo_hi_bytes(low_byte_x, high_byte_x)
                         self._y[i] = self._add_lo_hi_bytes(low_byte_y, high_byte_y)
                         self._s[i] = self._add_lo_hi_bytes(low_byte_s, high_byte_s)
-
-                    self._touch_detected = True
 
                     logging.debug(
                             'dev pos=%s %s %s',
