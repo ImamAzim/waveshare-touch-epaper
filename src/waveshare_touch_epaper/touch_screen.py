@@ -158,7 +158,7 @@ class GT1151(object):
         with self._coordinates_lock:
             if (
                     self._x_old[0] == self._x[0] and
-                    self._y_old[0] == self._y[0] and
+                    self._y_old[0] == self._y[0]
                     ):
                 return False
             else:
