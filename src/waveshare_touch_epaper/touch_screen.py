@@ -1,5 +1,4 @@
 import time
-import threading
 import logging
 
 
@@ -114,7 +113,6 @@ class GT1151(object):
         self._reset()
         self._gpio_int.when_pressed = self._process_coordinate_reading
 
-
     def stop(self):
         """ enter sleep mode and close the ports
 
@@ -142,7 +140,8 @@ class GT1151(object):
         request = buf[0]
 
         if request == 0x01:
-            logging.debug('request for master to send configuration information')
+            logging.debug(
+                    'request for master to send configuration information')
             logging.debug('feature not implemented. I do nothing')
         elif request == 0x03:
             logging.debug('request master to reset')
@@ -153,7 +152,9 @@ class GT1151(object):
     def _read_coordinates(self, n_touch_points):
 
         logging.debug('read coordinates')
-        buf = self._i2c_readbyte(self._REGISTER['coordinates_values'], length=n_touch_points*8)
+        buf = self._i2c_readbyte(
+                self._REGISTER['coordinates_values'],
+                length=n_touch_points*8)
 
         # store old value
         self._x_old[0] = self._x[0]
@@ -180,7 +181,7 @@ class GT1151(object):
                 )
         # must write 0 after coordinate read
         logging.debug('write 0 to register because coordinate read')
-        self._i2c_writebyte(self._REGISTER['coordinates_info'], value=mask)
+        self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
 
     def _process_coordinate_reading(self, triggered=True):
         """
@@ -191,15 +192,15 @@ class GT1151(object):
             logging.debug('INT has been pressed!')
         else:
             logging.debug('polling..')
-        buf = []
-        mask = 0x00
 
         last_iteration = False
         while last_iteration is not True:
             last_iteration = True
 
             logging.debug('check buffer status')
-            buf = self._i2c_readbyte(self._REGISTER['coordinates_info'], length=1)
+            buf = self._i2c_readbyte(
+                    self._REGISTER['coordinates_info'],
+                    length=1)
             buffer_status = self._get_bits(buf[0], 7)
             n_touch_points = self._get_bits(buf[0], 0, 3)
 
