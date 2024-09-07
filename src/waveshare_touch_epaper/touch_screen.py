@@ -141,8 +141,13 @@ class GT1151(object):
 
         logging.debug('there is a FW request')
 
-        buf = self._i2c_readbyte(self._REGISTER['fw_request'], length=1)
+        buf = self._i2c_readbyte(self._REGISTER['fw_request'], length=3)
         request = buf[0]
+        FW_status_L = buf[1]
+        FW_status_H = buf[2]
+        FW_status = self._add_lo_hi_bytes(FW_status_L, FW_status_H)
+        logging.debug('fw request %s', hex(request))
+        logging.debug('fw status %s', FW_status)
 
         if request == 0x01:
             logging.debug(
@@ -153,6 +158,7 @@ class GT1151(object):
             self._enter_normal_mode()
         else:
             logging.debug('no need to process')
+        self._i2c_writebyte(self._REGISTER['fw_request'], 0x0)
 
     def _has_touch_moved(self):
         with self._coordinates_lock:
@@ -210,20 +216,14 @@ class GT1151(object):
         while last_iteration is not True:
             last_iteration = True
 
-            logging.debug('check buffer status')
             buf = self._i2c_readbyte(
                     self._REGISTER['coordinates_info'],
                     length=1)
             buffer_status = self._get_bits(buf[0], 7)
             n_touch_points = self._get_bits(buf[0], 0, 3)
+            logging.debug('buffer status is %s', buffer_status)
 
             if buffer_status == 0:  # device note ready and data invalid
-
-                logging.debug('int pressed: %s', self._gpio_int.is_pressed)
-                logging.debug('write 0 to coord info')
-                self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
-                logging.debug('int pressed: %s', self._gpio_int.is_pressed)
-
                 if triggered:
                     self._answer_to_FW_request()
                 else:
@@ -234,10 +234,8 @@ class GT1151(object):
                 logging.debug('detected %s touch', n_touch_points)
                 if n_touch_points > 0:
                     self._read_coordinates(n_touch_points)
-                logging.debug('int pressed: %s', self._gpio_int.is_pressed)
-                logging.debug('write 0 to coord info')
                 self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
-                logging.debug('int pressed: %s', self._gpio_int.is_pressed)
+            # logging.debug('INT pressed: %s', self._gpio_int.is_pressed)
 
 
 
