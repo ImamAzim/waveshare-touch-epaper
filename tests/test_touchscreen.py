@@ -5,7 +5,7 @@ import logging
 from waveshare_touch_epaper.touch_screen import GT1151
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 def touch_screen():
