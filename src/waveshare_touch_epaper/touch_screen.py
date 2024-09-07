@@ -236,10 +236,14 @@ class GT1151(object):
             logging.exception(msg)
             raise TouchEpaperException()
 
+        old_coord = self._x[0], self._y[0]
+        new_coord = self._x[0], self._y[0]
         self._touch_detected = False
-        while self._touch_detected is False:
-            pass
-        return self._x[0], self._y[0], self._s[0]
+        while True:
+            if self._touch_detected:
+                break
+        new_coord = self._x[0], self._y[0]
+        return new_coord
 
 
 if __name__ == '__main__':
