@@ -219,8 +219,10 @@ class GT1151(object):
 
             if buffer_status == 0:  # device note ready and data invalid
 
+                logging.debug('int pressed: %s', self._gpio_int.is_pressed)
                 logging.debug('write 0 to coord info')
                 self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
+                logging.debug('int pressed: %s', self._gpio_int.is_pressed)
 
                 if triggered:
                     self._answer_to_FW_request()
@@ -232,8 +234,10 @@ class GT1151(object):
                 logging.debug('detected %s touch', n_touch_points)
                 if n_touch_points > 0:
                     self._read_coordinates(n_touch_points)
+                logging.debug('int pressed: %s', self._gpio_int.is_pressed)
                 logging.debug('write 0 to coord info')
                 self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
+                logging.debug('int pressed: %s', self._gpio_int.is_pressed)
 
 
 
