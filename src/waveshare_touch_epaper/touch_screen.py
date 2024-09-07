@@ -39,13 +39,11 @@ class GT1151(object):
         self._x = [0] * 10
         self._y = [0] * 10
         self._s = [0] * 10
-        self._x_old = [0] * 10
-        self._y_old = [0] * 10
-        self._s_old = [0] * 10
 
         self._stopped = False
         self._coordinates_lock = RLock()
         self._mode = None
+        self._touch_detected = False
 
     def __enter__(self):
         self._enter_normal_mode()
@@ -160,16 +158,6 @@ class GT1151(object):
             logging.debug('no need to process')
         self._i2c_writebyte(self._REGISTER['fw_request'], 0x0)
 
-    def _has_touch_moved(self):
-        with self._coordinates_lock:
-            if (
-                    self._x_old[0] == self._x[0] and
-                    self._y_old[0] == self._y[0]
-                    ):
-                return False
-            else:
-                return True
-
     def _read_coordinates(self, n_touch_points):
 
         logging.debug('read coordinates')
@@ -177,23 +165,17 @@ class GT1151(object):
                 self._REGISTER['coordinates_values'],
                 length=n_touch_points*8)
 
-        with self._coordinates_lock:
-            # store old values
-            self._x_old[0] = self._x[0]
-            self._y_old[0] = self._y[0]
-            self._s_old[0] = self._s[0]
-
-            # get new coord and assign
-            for i in range(n_touch_points):
-                low_byte_x = buf[1+8*i]
-                high_byte_x = buf[2+8*i]
-                low_byte_y = buf[3+8*i]
-                high_byte_y = buf[4+8*i]
-                low_byte_s = buf[5+8*i]
-                high_byte_s = buf[6+8*i]
-                self._x[i] = self._add_lo_hi_bytes(low_byte_x, high_byte_x)
-                self._y[i] = self._add_lo_hi_bytes(low_byte_y, high_byte_y)
-                self._s[i] = self._add_lo_hi_bytes(low_byte_s, high_byte_s)
+        # get new coord and assign
+        for i in range(n_touch_points):
+            low_byte_x = buf[1+8*i]
+            high_byte_x = buf[2+8*i]
+            low_byte_y = buf[3+8*i]
+            high_byte_y = buf[4+8*i]
+            low_byte_s = buf[5+8*i]
+            high_byte_s = buf[6+8*i]
+            self._x[i] = self._add_lo_hi_bytes(low_byte_x, high_byte_x)
+            self._y[i] = self._add_lo_hi_bytes(low_byte_y, high_byte_y)
+            self._s[i] = self._add_lo_hi_bytes(low_byte_s, high_byte_s)
 
         logging.debug(
                 'new coordinates=%s %s %s',
@@ -234,9 +216,8 @@ class GT1151(object):
                 logging.debug('detected %s touch', n_touch_points)
                 if n_touch_points > 0:
                     self._read_coordinates(n_touch_points)
+                    self._touch_detected = True
                 self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
-            # logging.debug('INT pressed: %s', self._gpio_int.is_pressed)
-
 
 
     def input(self):
@@ -255,10 +236,9 @@ class GT1151(object):
             logging.exception(msg)
             raise TouchEpaperException()
 
-        while True:
-            self._gpio_int.wait_for_press()
-            if self._has_touch_moved():
-                break
+        self._touch_detected = False
+        while self._touch_detected is False:
+            pass
         return self._x[0], self._y[0], self._s[0]
 
 
