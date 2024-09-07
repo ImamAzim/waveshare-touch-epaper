@@ -241,8 +241,11 @@ class GT1151(object):
         self._touch_detected = False
         while True:
             if self._touch_detected:
-                break
-        new_coord = self._x[0], self._y[0]
+                new_coord = self._x[0], self._y[0]
+                if new_coord != old_coord:
+                    break
+                else:
+                    self._touch_detected = False
         return new_coord
 
 
