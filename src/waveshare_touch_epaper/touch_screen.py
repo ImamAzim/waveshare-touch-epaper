@@ -1,6 +1,6 @@
 import time
 import logging
-from threading import RLock
+from threading import Event
 
 
 from smbus3 import SMBus
@@ -41,9 +41,8 @@ class GT1151(object):
         self._s = [0] * 10
 
         self._stopped = False
-        self._coordinates_lock = RLock()
         self._mode = None
-        self._touch_detected = False
+        self._touch_detected = Event()
 
     def __enter__(self):
         self._enter_normal_mode()
@@ -216,7 +215,7 @@ class GT1151(object):
                 logging.debug('detected %s touch', n_touch_points)
                 if n_touch_points > 0:
                     self._read_coordinates(n_touch_points)
-                    self._touch_detected = True
+                    self._touch_detected.set()
                 self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
 
 
@@ -238,14 +237,11 @@ class GT1151(object):
 
         old_coord = self._x[0], self._y[0]
         new_coord = self._x[0], self._y[0]
-        self._touch_detected = False
-        while True:
-            if self._touch_detected:
-                new_coord = self._x[0], self._y[0]
-                if new_coord != old_coord:
-                    break
-                else:
-                    self._touch_detected = False
+        self._touch_detected.clear()
+        while new_coord == old_coord:
+            self._touch_detected.wait()
+            new_coord = self._x[0], self._y[0]
+            self._touch_detected.clear()
         return new_coord
 
 
