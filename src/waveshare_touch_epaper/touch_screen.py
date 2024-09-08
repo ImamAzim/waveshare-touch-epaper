@@ -138,6 +138,7 @@ class GT1151(object):
 
     def sleep(self):
         """enter sleep mode to reduce consumption
+        will be woke up if ask for input or gesture
         :
 
         """
