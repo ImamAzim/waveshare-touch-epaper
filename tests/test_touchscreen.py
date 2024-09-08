@@ -17,7 +17,7 @@ def touch_screen():
         x, y = gt.input()
         print('please touch the screen a 2nd time')
         print(f'detected touch at {x}, {y}')
-        print('please slide up')
+        print('please do a left slide')
         gt.wait_for_gesture()
         print('success')
 
