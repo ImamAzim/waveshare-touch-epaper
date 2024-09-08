@@ -103,6 +103,21 @@ class GT1151(object):
         new_byte = (high_byte << nbits) + low_byte
         return new_byte
 
+    def _send_command(self, command, data):
+        check_sum = 0x100 - command - data
+        self._i2c_writebyte(
+                self._REGISTER['command'],
+                command,
+                )
+        self._i2c_writebyte(
+                self._REGISTER['command_data'],
+                data,
+                )
+        self._i2c_writebyte(
+                self._REGISTER['command_checksum'],
+                check_sum,
+                )
+
     def _get_product_id(self):
         length = 4
         buf = self._i2c_readbyte(self._REGISTER['product_id'], length)
