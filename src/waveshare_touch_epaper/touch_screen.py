@@ -320,9 +320,9 @@ class GT1151(object):
             self._touch_detected.clear()
         return new_coord
 
-    def wait_for_gesture(self, gesture='double_click':
+    def wait_for_gesture(self, gesture='double_click'):
         """switch to gesture wake up mode and will return when gesture detected
-        :returns: TODO
+        :gesture: one of (double_click,)
 
         """
         self._check_if_started()
@@ -333,7 +333,7 @@ class GT1151(object):
         self._gesture_detected.clear()
         while not correct_gesture:
             self._gesture_detected.wait()
-            correct_gesture = 
+            correct_gesture = self._gesture==gesture
 
 
 if __name__ == '__main__':
