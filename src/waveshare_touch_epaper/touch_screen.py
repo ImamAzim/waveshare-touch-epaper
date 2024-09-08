@@ -130,6 +130,12 @@ class GT1151(object):
         self._gpio_int.when_pressed = self._process_coordinate_reading
         self._mode = 'normal'
 
+    def _enter_sleep_mode(self):
+        logging.debug('enter sleep mode')
+        self._gpio_int.when_pressed = lambda :print('INT pressed in sleep mode')
+        self._enter_sleep_mode(0x05, 0x00)
+        self._mode = 'sleep'
+
     def stop(self):
         """ enter sleep mode and close the ports
 
