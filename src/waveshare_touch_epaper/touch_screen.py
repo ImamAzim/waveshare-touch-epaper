@@ -32,13 +32,13 @@ class GT1151(object):
             sleep_mode=0x05,
             gesture_mode=0x08,
             )
-    _GESTURE_CODE = dict(
-            right_slide=0xaa,
-            left_slide=0xbb,
-            slide_down=0xab,
-            slide_up=0xba,
-            double_click=0xcc,
-            )
+    _GESTURE_TYPES = {
+            0xaa: 'right_slide',
+            0xbb: 'left_slide',
+            0xab: 'slide_down',
+            0xba: 'slide_up',
+            0xcc: 'double_click',
+            }
 
     def __init__(self):
 
@@ -172,7 +172,7 @@ class GT1151(object):
                 length=1,
                 )
         gesture = buf[0]
-        logging.debug('gesture is %s', hex(gesture))
+        logging.debug('gesture is %s', self._GESTURE_TYPES.get(gesture))
         self._i2c_writebyte(
                 self._REGISTER['gesture_type'],
                 0x0,
@@ -189,7 +189,8 @@ class GT1151(object):
         """
         self._check_if_started()
         self._check_if_stopped()
-        self._enter_sleep_mode()
+        if self._mode != 'sleep':
+            self._enter_sleep_mode()
 
     def stop(self):
         """ enter sleep mode and close the ports
@@ -198,7 +199,8 @@ class GT1151(object):
         self._check_if_stopped()
 
         self._reset()
-        self._enter_sleep_mode()
+        if self._mode != 'sleep':
+            self._enter_sleep_mode()
         logging.debug('close connections to touch screen')
         self._bus.close()
         self._gpio_trst.off()
@@ -330,12 +332,13 @@ class GT1151(object):
         self._check_if_started()
         self._check_if_stopped()
 
-        self._enter_gesture_mode()
+        if self._mode != 'gesture':
+            self._enter_gesture_mode()
         correct_gesture = False
         self._gesture_detected.clear()
         while not correct_gesture:
             self._gesture_detected.wait()
-            correct_gesture = self._GESTURE_CODE.get(gesture) == self._gesture
+            correct_gesture = self._GESTURE_TYPES.get(self._gesture) == gesture
             self._gesture_detected.clear()
 
 
