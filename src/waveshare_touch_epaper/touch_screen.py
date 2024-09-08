@@ -332,6 +332,7 @@ class GT1151(object):
         while not correct_gesture:
             self._gesture_detected.wait()
             correct_gesture = self._GESTURE_CODE.get(gesture) == self._gesture
+            self._gesture_detected.clear()
 
 
 if __name__ == '__main__':
