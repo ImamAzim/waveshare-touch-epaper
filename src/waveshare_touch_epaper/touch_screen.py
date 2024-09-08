@@ -65,7 +65,7 @@ class GT1151(object):
             self.stop()
 
     def _reset(self):
-        self._gpio_int.when_pressed = None
+        self._gpio_int.when_pressed = lambda :None
         self._gpio_trst.on()
         time.sleep(0.1)
         self._gpio_trst.off()
@@ -136,7 +136,7 @@ class GT1151(object):
 
     def _enter_sleep_mode(self):
         logging.debug('enter sleep mode')
-        self._gpio_int.when_pressed = lambda :print('INT pressed in sleep mode')
+        self._gpio_int.when_pressed = lambda :None
         self._send_command(
                 self._COMMAND['sleep_mode'],
                 0x00,
