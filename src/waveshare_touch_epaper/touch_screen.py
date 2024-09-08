@@ -155,6 +155,12 @@ class GT1151(object):
 
     def _process_gesture_reading(self):
         logging.debug('INT pressed!')
+        buf = self._i2c_readbyte(
+                self._REGISTER['gesture_type'],
+                length=1,
+                )
+        gesture = buf[0]
+        logging.debug('gesture is %s', hex(gesture))
 
 
     def sleep(self):
