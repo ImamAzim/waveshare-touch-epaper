@@ -144,14 +144,18 @@ class GT1151(object):
                 )
         self._mode = 'sleep'
 
-    def _enture_gesture_mode(self):
+    def _enter_gesture_mode(self):
         logging.debug('enter gesture mode')
-        self._gpio_int.when_pressed = lambda :None
+        self._gpio_int.when_pressed = self._process_gesture_reading
         self._send_command(
                 self._COMMAND['gesture_mode'],
                 0x00,
                 )
         self._mode = 'gesture'
+
+    def _process_gesture_reading(self):
+        logging.debug('INT pressed!')
+
 
     def sleep(self):
         """enter sleep mode to reduce consumption
