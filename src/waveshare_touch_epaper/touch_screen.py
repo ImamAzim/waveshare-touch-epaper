@@ -57,6 +57,7 @@ class GT1151(object):
         """ enter the normal mode
 
         """
+        self._check_if_stopped()
         self._enter_normal_mode()
         self._get_product_id()
 
@@ -149,26 +150,23 @@ class GT1151(object):
         :
 
         """
+        self._check_if_stopped()
         self._enter_sleep_mode()
 
     def stop(self):
         """ enter sleep mode and close the ports
 
         """
+        self._check_if_stopped()
 
-        if not self._stopped:
-            self._reset()
-            self._enter_sleep_mode()
-            logging.debug('close connections to touch screen')
-            self._bus.close()
-            self._gpio_trst.off()
-            self._gpio_trst.close()
-            self._gpio_int.close()
-            self._stopped = True
-        else:
-            msg = 'touch screen has already been stopped'
-            logging.exception(msg)
-            raise TouchEpaperException()
+        self._reset()
+        self._enter_sleep_mode()
+        logging.debug('close connections to touch screen')
+        self._bus.close()
+        self._gpio_trst.off()
+        self._gpio_trst.close()
+        self._gpio_int.close()
+        self._stopped = True
 
     def _answer_to_FW_request(self):
 
@@ -254,17 +252,19 @@ class GT1151(object):
                     self._touch_detected.set()
                 self._i2c_writebyte(self._REGISTER['coordinates_info'], 0x0)
 
+    def _check_if_stopped(self):
+        if self._stopped:
+            msg = 'touch screen has already been stopped.'
+            logging.exception(msg)
+            raise TouchEpaperException()
+
 
     def input(self):
         """ wait for touch and different from previous
         :returns: X, Y, S coordinates of one touch
 
         """
-
-        if self._stopped:
-            msg = 'touch screen has already been stopped.'
-            logging.exception(msg)
-            raise TouchEpaperException()
+        self._check_if_stopped()
 
         if not self._mode == 'normal':
             self._enter_normal_mode()
