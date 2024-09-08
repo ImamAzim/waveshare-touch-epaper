@@ -46,6 +46,7 @@ class GT1151(object):
         self._gesture = None
 
         self._stopped = False
+        self._started = False
         self._mode = None
         self._touch_detected = Event()
         self._gesture_detected = Event()
@@ -53,6 +54,7 @@ class GT1151(object):
     def __enter__(self):
         self._enter_normal_mode()
         self._get_product_id()
+        self._started = True
         return self
 
     def start(self):
@@ -62,6 +64,7 @@ class GT1151(object):
         self._check_if_stopped()
         self._enter_normal_mode()
         self._get_product_id()
+        self._started = True
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         if not self._stopped:
@@ -178,6 +181,7 @@ class GT1151(object):
         :
 
         """
+        self._check_if_started()
         self._check_if_stopped()
         self._enter_sleep_mode()
 
@@ -286,12 +290,19 @@ class GT1151(object):
             logging.exception(msg)
             raise TouchEpaperException()
 
+    def _check_if_started(self):
+        if not self._started:
+            msg = 'touch screen has not started.'
+            logging.exception(msg)
+            raise TouchEpaperException()
+
 
     def input(self):
         """ wait for touch and different from previous
         :returns: X, Y, S coordinates of one touch
 
         """
+        self._check_if_started()
         self._check_if_stopped()
 
         if not self._mode == 'normal':
