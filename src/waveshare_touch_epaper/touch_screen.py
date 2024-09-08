@@ -43,10 +43,12 @@ class GT1151(object):
         self._x = [0] * 10
         self._y = [0] * 10
         self._s = [0] * 10
+        self._gesture = None
 
         self._stopped = False
         self._mode = None
         self._touch_detected = Event()
+        self._gesture_detected = Event()
 
     def __enter__(self):
         self._enter_normal_mode()
@@ -165,6 +167,9 @@ class GT1151(object):
                 self._REGISTER['gesture_type'],
                 0x0,
                 )
+        if gesture:
+            self._gesture = gesture
+            self._gesture_detected.set()
 
 
     def sleep(self):
