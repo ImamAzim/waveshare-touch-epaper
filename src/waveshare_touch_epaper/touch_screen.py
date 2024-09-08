@@ -136,6 +136,13 @@ class GT1151(object):
         self._enter_sleep_mode(0x05, 0x00)
         self._mode = 'sleep'
 
+    def sleep(self):
+        """enter sleep mode to reduce consumption
+        :
+
+        """
+        self._enter_sleep_mode()
+
     def stop(self):
         """ enter sleep mode and close the ports
 
@@ -143,8 +150,8 @@ class GT1151(object):
 
         if not self._stopped:
             self._reset()
-            logging.debug('TODO: enter sleep mode')
-            logging.info('close connections to touch screen')
+            self._enter_sleep_mode()
+            logging.debug('close connections to touch screen')
             self._bus.close()
             self._gpio_trst.off()
             self._gpio_trst.close()
@@ -252,9 +259,7 @@ class GT1151(object):
             raise TouchEpaperException()
 
         if not self._mode == 'normal':
-            msg = 'device is not in normal mode'
-            logging.exception(msg)
-            raise TouchEpaperException()
+            self._enter_normal_mode()
 
         old_coord = self._x[0], self._y[0]
         new_coord = self._x[0], self._y[0]
