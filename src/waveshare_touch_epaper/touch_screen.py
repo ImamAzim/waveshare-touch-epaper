@@ -74,7 +74,7 @@ class GT1151(object):
             self.stop()
 
     def _reset(self):
-        self._gpio_int.when_pressed = lambda :None
+        self._gpio_int.when_pressed = lambda: None
         self._gpio_trst.on()
         time.sleep(0.1)
         self._gpio_trst.off()
@@ -145,7 +145,7 @@ class GT1151(object):
 
     def _enter_sleep_mode(self):
         logging.debug('enter sleep mode')
-        self._gpio_int.when_pressed = lambda :None
+        self._gpio_int.when_pressed = lambda: None
         self._send_command(
                 self._COMMAND['sleep_mode'],
                 0x00,
@@ -176,7 +176,6 @@ class GT1151(object):
         if gesture:
             self._gesture = gesture
             self._gesture_detected.set()
-
 
     def sleep(self):
         """enter sleep mode to reduce consumption
@@ -299,7 +298,6 @@ class GT1151(object):
             logging.exception(msg)
             raise TouchEpaperException()
 
-
     def input(self):
         """ wait for touch and different from previous
         :returns: X, Y, S coordinates of one touch
@@ -333,7 +331,7 @@ class GT1151(object):
         self._gesture_detected.clear()
         while not correct_gesture:
             self._gesture_detected.wait()
-            correct_gesture = self._GESTURE_CODE.get(gesture)==self._gesture
+            correct_gesture = self._GESTURE_CODE.get(gesture) == self._gesture
 
 
 if __name__ == '__main__':
