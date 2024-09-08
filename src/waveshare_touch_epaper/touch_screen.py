@@ -324,11 +324,15 @@ class GT1151(object):
             self._touch_detected.clear()
         return new_coord
 
-    def wait_for_gesture(self, gesture='slide_up'):
+    def wait_for_gesture(self, gesture='left_slide'):
         """switch to gesture wake up mode and will return when gesture detected
         :gesture: one of (right_slide, left_slide, slide_up, slide_down, double_click,)
 
         """
+        if gesture not in self._GESTURE_TYPES.values():
+            msg = 'gesture type not implemented'
+            logging.exception(msg)
+            raise TouchEpaperException(msg)
         self._check_if_started()
         self._check_if_stopped()
 
