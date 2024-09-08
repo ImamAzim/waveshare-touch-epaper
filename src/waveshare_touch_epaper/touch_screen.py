@@ -161,6 +161,10 @@ class GT1151(object):
                 )
         gesture = buf[0]
         logging.debug('gesture is %s', hex(gesture))
+        self._i2c_writebyte(
+                self._REGISTER['gesture_type'],
+                0x0,
+                )
 
 
     def sleep(self):
