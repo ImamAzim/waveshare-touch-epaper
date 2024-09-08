@@ -1,12 +1,12 @@
 waveshare touch epaper
 =========================
-
-a copy of the waveshare python library `waveshare library <https://github.com/waveshareteam/Touch_e-Paper_HAT>`_ for the Touch epaper display 2.13 inches and 2.9 inches. Like this, you can directly use pip to install the library in your virtual environement, without the need to clone or download all the files.
+in development
+a refactor of python library `waveshare library <https://github.com/waveshareteam/Touch_e-Paper_HAT>`_ for the Touch epaper display 2.13 inches, more pythonic and easier to use. Like this, you can directly use pip to install the library in your virtual environement, without the need to clone or download all the files.
 
 hardware requirements
 =======================
 
-* one of the waveshare touch epaper display
+* one of the waveshare touch epaper display (currentyl only the 2.13 inch)
 * raspberry pi (or probably an other computer with an gpio port and spi interface)
 
 Installation
@@ -37,7 +37,7 @@ Usage
 ========
 
 
-To use a epaper display:
+To use a epaper display (to be changed):
 
 .. code-block:: python
 
@@ -59,11 +59,35 @@ To use the touch screen:
 
 .. code-block:: python
 
-    from waveshare_touch_epaper import gt1151, epd2in13_V4
-    epd = epd2in13_V4.EPD()
-    gt = gt1151.GT1151()
-    gt.GT_Init()
+    from waveshare_touch_epaper.touch_screen import GT1151
 
+    gt = GT1151()
+    gt.start()
+    x, y = gt.input()  # return when touch detected and return its coordinates
+    print('please do a left slide')
+    gt.wait_for_gesture(gesture='left_slide')
+    gt.stop()
+
+you can also use a context manager:
+
+.. code-block:: python
+
+    from waveshare_touch_epaper.touch_screen import GT1151
+
+    with GT1151() as gt:
+        x, y = gt.input()  # return when touch detected and return its coordinates
+
+when the object is stopped, you cannot use it anymore, but you can set it to sleep to reduce current consumption. It will awake when you ask for input:
+
+.. code-block:: python
+
+    from waveshare_touch_epaper.touch_screen import GT1151
+
+    with GT1151() as gt:
+        x, y = gt.input()
+        gt.sleep()
+        time.sleep(100)
+        x, y = gt.input()
 
 Features
 ========
