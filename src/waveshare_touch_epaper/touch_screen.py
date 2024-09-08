@@ -28,6 +28,10 @@ class GT1151(object):
             product_id=0x8140,
             gesture_type=0x814C,
             )
+    _COMMAND = dict(
+            sleep_mode=0x05,
+            gesture_mode=0x08,
+            )
 
     def __init__(self):
 
@@ -133,7 +137,10 @@ class GT1151(object):
     def _enter_sleep_mode(self):
         logging.debug('enter sleep mode')
         self._gpio_int.when_pressed = lambda :print('INT pressed in sleep mode')
-        self._enter_sleep_mode(0x05, 0x00)
+        self._send_command(
+                self._COMMAND['sleep_mode'],
+                0x00,
+                )
         self._mode = 'sleep'
 
     def sleep(self):
