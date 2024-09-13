@@ -315,12 +315,12 @@ class GT1151(object):
         if not self._mode == 'normal':
             self._enter_normal_mode()
 
-        old_coord = self._x[0], self._y[0]
-        new_coord = self._x[0], self._y[0]
+        old_coord = self._x[0], self._y[0], self._s[0]
+        new_coord = self._x[0], self._y[0], self._s[0]
         self._touch_detected.clear()
         while new_coord == old_coord:
             self._touch_detected.wait()
-            new_coord = self._x[0], self._y[0]
+            new_coord = self._x[0], self._y[0], self._s[0]
             self._touch_detected.clear()
         return new_coord
 

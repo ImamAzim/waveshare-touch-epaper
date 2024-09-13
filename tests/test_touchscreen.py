@@ -12,9 +12,9 @@ def touch_screen():
 
     with GT1151() as gt:
         print('please touch the screen')
-        x, y = gt.input()
+        x, y, s = gt.input()
         print(f'detected touch at {x}, {y}')
-        x, y = gt.input()
+        x, y, s = gt.input()
         print('please touch the screen a 2nd time')
         print(f'detected touch at {x}, {y}')
         print('please do a left slide')
