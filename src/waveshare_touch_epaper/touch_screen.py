@@ -1,3 +1,4 @@
+from abc import ABCMeta, abstractmethod
 import time
 import logging
 from threading import Event
@@ -5,6 +6,17 @@ from threading import Event
 
 from smbus3 import SMBus
 import gpiozero
+
+touchscreen_models = dict()
+
+class MetaTouchScreen(ABCMeta):
+
+    """meta class  for touch screen to store class and their model in a dict"""
+
+    def __init__(cls, name, bases, dict):
+        """TODO: to be defined. """
+        ABCMeta.__init__(cls, name, bases, dict)
+        touchscreen_models[name] = cls
 
 
 class TouchEpaperException(Exception):
