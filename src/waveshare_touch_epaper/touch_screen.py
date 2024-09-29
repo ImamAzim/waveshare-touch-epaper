@@ -29,6 +29,13 @@ class BaseTouchScreen(object, metaclass=MetaTouchScreen):
         pass
 
 
+class GT1151Mock(BaseTouchScreen):
+
+    """mock of gt1151 touch screen. the touch are replaced with input of keyboard.
+    There is no need ot gpio"""
+    pass
+
+
 class TouchEpaperException(Exception):
     pass
 
