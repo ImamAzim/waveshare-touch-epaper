@@ -26,6 +26,10 @@ class BaseTouchScreen(object, metaclass=MetaTouchScreen):
 
     @abstractmethod
     def input(self):
+        """ wait for touch and different from previous
+        :returns: X, Y, S coordinates of one touch
+
+        """
         pass
 
 
@@ -35,6 +39,7 @@ class GT1151Mock(BaseTouchScreen):
     There is no need ot gpio"""
 
     def input(self):
+        """ touch is replaced by input """
         x_str = input('x=')
         y_str = input('y=')
         s_str = input('s=')
@@ -339,10 +344,6 @@ class GT1151(BaseTouchScreen):
             raise TouchEpaperException()
 
     def input(self):
-        """ wait for touch and different from previous
-        :returns: X, Y, S coordinates of one touch
-
-        """
         self._check_if_started()
         self._check_if_stopped()
 
