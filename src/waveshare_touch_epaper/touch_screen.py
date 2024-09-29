@@ -33,14 +33,19 @@ class GT1151Mock(BaseTouchScreen):
 
     """mock of gt1151 touch screen. the touch are replaced with input of keyboard.
     There is no need ot gpio"""
-    pass
+
+    def input(self):
+        x_str = input('x=')
+        y_str = input('y=')
+        s_str = input('s=')
+        return int(x_str), int(y_str), int(s_str)
 
 
 class TouchEpaperException(Exception):
     pass
 
 
-class GT1151(object):
+class GT1151(BaseTouchScreen):
 
     """touch screen part of the 2.13 inch touch epaper display"""
 
