@@ -19,6 +19,16 @@ class MetaTouchScreen(ABCMeta):
         touchscreen_models[name] = cls
 
 
+class BaseTouchScreen(object, metaclass=MetaTouchScreen):
+
+    """Base class for touch screen models
+    abstraction to provide interface of any touchscreen class"""
+
+    @abstractmethod
+    def input(self):
+        pass
+
+
 class TouchEpaperException(Exception):
     pass
 
