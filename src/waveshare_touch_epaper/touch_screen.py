@@ -19,7 +19,7 @@ class MetaTouchScreen(ABCMeta):
         touchscreen_models[name] = cls
 
 
-class BaseTouchScreen(object, metaclass=MetaTouchScreen):
+class BaseTouchScreen(object, metaclass=ABCMeta):
 
     """Base class for touch screen models
     abstraction to provide interface of any touchscreen class"""
@@ -33,7 +33,7 @@ class BaseTouchScreen(object, metaclass=MetaTouchScreen):
         pass
 
 
-class GT1151Mock(BaseTouchScreen):
+class GT1151Mock(BaseTouchScreen, metaclass=MetaTouchScreen):
 
     """mock of gt1151 touch screen. the touch are replaced with input of keyboard.
     There is no need ot gpio"""
@@ -50,7 +50,7 @@ class TouchEpaperException(Exception):
     pass
 
 
-class GT1151(BaseTouchScreen):
+class GT1151(BaseTouchScreen, metaclass=MetaTouchScreen):
 
     """touch screen part of the 2.13 inch touch epaper display"""
 
