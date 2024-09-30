@@ -14,7 +14,7 @@ class MetaTouchScreen(ABCMeta):
     """meta class  for touch screen to store class and their model in a dict"""
 
     def __init__(cls, name, bases, dict):
-        """TODO: to be defined. """
+        """store the class and in a dict upon creation"""
         ABCMeta.__init__(cls, name, bases, dict)
         touchscreen_models[name] = cls
 
@@ -26,10 +26,45 @@ class BaseTouchScreen(object, metaclass=ABCMeta):
 
     @abstractmethod
     def input(self):
-        """ wait for touch and different from previous
+        """ block until a tap is detected. unblock only if tap coordinates
+        have moved.
         :returns: X, Y, S coordinates of one touch
 
         """
+        pass
+
+    @abstractmethod
+    def sleep(self):
+        """enter sleep mode to reduce consumption
+        will be woke up if ask for input or gesture
+
+        """
+        pass
+
+    @abstractmethod
+    def start(self):
+        """ enter the normal mode
+
+        """
+        pass
+
+    @abstractmethod
+    def stop(self):
+        """ enter sleep mode and close the ports
+
+        """
+        pass
+
+    @abstractmethod
+    def wait_for_gesture(self):
+        pass
+
+    @abstractmethod
+    def __enter__(self):
+        pass
+
+    @abstractmethod
+    def __exit__(self, ex_type, ex_value, ex_traceback):
         pass
 
 
@@ -104,9 +139,6 @@ class GT1151(BaseTouchScreen, metaclass=MetaTouchScreen):
         return self
 
     def start(self):
-        """ enter the normal mode
-
-        """
         self._check_if_stopped()
         self._enter_normal_mode()
         self._get_product_id()
@@ -221,20 +253,12 @@ class GT1151(BaseTouchScreen, metaclass=MetaTouchScreen):
             self._gesture_detected.set()
 
     def sleep(self):
-        """enter sleep mode to reduce consumption
-        will be woke up if ask for input or gesture
-        :
-
-        """
         self._check_if_started()
         self._check_if_stopped()
         if self._mode != 'sleep':
             self._enter_sleep_mode()
 
     def stop(self):
-        """ enter sleep mode and close the ports
-
-        """
         self._check_if_stopped()
 
         self._reset()
