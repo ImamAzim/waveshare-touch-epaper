@@ -9,6 +9,7 @@ import gpiozero
 
 touchscreen_models = dict()
 
+
 class MetaTouchScreen(ABCMeta):
 
     """meta class  for touch screen to store class and their model in a dict"""
@@ -70,8 +71,8 @@ class BaseTouchScreen(object, metaclass=ABCMeta):
 
 class GT1151Mock(BaseTouchScreen, metaclass=MetaTouchScreen):
 
-    """mock of gt1151 touch screen. the touch are replaced with input of keyboard.
-    There is no need ot gpio"""
+    """mock of gt1151 touch screen. the touch are replaced with
+    input of keyboard. There is no need ot gpio"""
 
     def input(self):
         """ touch is replaced by input """
@@ -79,6 +80,27 @@ class GT1151Mock(BaseTouchScreen, metaclass=MetaTouchScreen):
         y_str = input('y=')
         s_str = input('s=')
         return int(x_str), int(y_str), int(s_str)
+
+    def wait_for_gesture(self):
+        """gesture is replaced by input enter"""
+        input('press enter to sim a gesture:\n')
+
+    def __enter__(self):
+        self.start()
+        return self
+
+    def start(self):
+        logging.info('mock reset GT')
+
+    def stop(self):
+        logging.info('mock close connection of GT and sleep')
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        self.stop()
+        pass
+
+    def sleep(self):
+        logging.info('mock sleep of touchscreen')
 
 
 class TouchEpaperException(Exception):
@@ -385,7 +407,8 @@ class GT1151(BaseTouchScreen, metaclass=MetaTouchScreen):
 
     def wait_for_gesture(self, gesture='left_slide'):
         """switch to gesture wake up mode and will return when gesture detected
-        :gesture: one of (right_slide, left_slide, slide_up, slide_down, double_click,)
+        :gesture: one of
+        (right_slide, left_slide, slide_up, slide_down, double_click,)
 
         """
         if gesture not in self._GESTURE_TYPES.values():
