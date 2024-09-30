@@ -1,11 +1,19 @@
+import unittest
 import time
 import logging
 
 
 from waveshare_touch_epaper.touch_screen import GT1151
+from waveshare_touch_epaper import touchscreen_models
 
 
 logging.basicConfig(level=logging.INFO)
+
+
+class TestTouchMock(unittest.TestCase):
+
+    def test_mock_interface(self):
+        gt = touchscreen_models['GT1151Mock']()
 
 
 def touch_screen():
