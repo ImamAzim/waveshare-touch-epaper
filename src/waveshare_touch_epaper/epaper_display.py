@@ -19,3 +19,7 @@ class BaseEpaper(object, metaclass=ABCMeta):
 
     """Base class for epaper, define interface with abstract methid. """
     pass
+
+
+class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
+    pass
