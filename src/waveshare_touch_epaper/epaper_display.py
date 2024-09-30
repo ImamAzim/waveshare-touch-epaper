@@ -6,9 +6,16 @@ epaper_models = dict()
 
 class MetaEpaper(ABCMeta):
 
-    """meta class  for epaper displays to store class and their model in a dict"""
+    """meta class  for epaper displays to store class
+    and their model in a dict"""
 
     def __init__(cls, name, bases, dict):
         """store the class and in a dict upon creation"""
         ABCMeta.__init__(cls, name, bases, dict)
         epaper_models[name] = cls
+
+
+class BaseEpaper(object, metaclass=ABCMeta):
+
+    """Base class for epaper, define interface with abstract methid. """
+    pass
