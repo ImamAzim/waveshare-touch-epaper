@@ -24,13 +24,20 @@ class BaseEpaper(object, metaclass=ABCMeta):
         pass
 
     @abstractproperty
-    def HEIGHHEIGHT(self):
+    def HEIGHT(self):
         pass
 
 
 
 class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
-    pass
+
+    @property
+    def WIDTH(self):
+        return 250
+
+    @property
+    def HEIGHT(self):
+        return 122
 
 
 class EpaperException(Exception):
