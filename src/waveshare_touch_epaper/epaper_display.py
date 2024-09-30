@@ -23,3 +23,11 @@ class BaseEpaper(object, metaclass=ABCMeta):
 
 class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
     pass
+
+
+class EpaperException(Exception):
+    pass
+
+
+class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
+    pass
