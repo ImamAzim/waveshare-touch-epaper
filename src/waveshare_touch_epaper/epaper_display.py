@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 import logging
 
 epaper_models = dict()
@@ -18,7 +18,15 @@ class MetaEpaper(ABCMeta):
 class BaseEpaper(object, metaclass=ABCMeta):
 
     """Base class for epaper, define interface with abstract methid. """
-    pass
+
+    @abstractproperty
+    def WIDTH(self):
+        pass
+
+    @abstractproperty
+    def HEIGHHEIGHT(self):
+        pass
+
 
 
 class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
