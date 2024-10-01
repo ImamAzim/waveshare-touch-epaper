@@ -67,7 +67,7 @@ class BaseEpaper(object, metaclass=ABCMeta):
     @abstractmethod
     def full_update(self):
         """initialization. should be called when the screen start working,
-        after exiting sleep mode or for a full refresh
+        after exiting sleep mode or possibly before full refresh
 
         """
         pass
