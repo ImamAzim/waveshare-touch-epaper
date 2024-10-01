@@ -49,13 +49,15 @@ class BaseEpaper(object, metaclass=ABCMeta):
 
     @abstractmethod
     def clear(self):
-        """clear the screen
+        """clear the e-paper to white
 
         """
         pass
 
 
 class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
+    """for this mock, no need of gpio port or spi and epaper display.
+    image are shown on desktop with pillow"""
 
     @property
     def WIDTH(self):
