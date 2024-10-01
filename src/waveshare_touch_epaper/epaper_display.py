@@ -126,6 +126,15 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
     def sleep(self):
         logging.info('mock: enter sleep mode')
 
+    def __enter__(self):
+        self.open()
+        self.full_update()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.sleep()
+        self.close()
+
 
 class EpaperException(Exception):
     pass
