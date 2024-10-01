@@ -81,6 +81,15 @@ class BaseEpaper(object, metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def display_full(self, img: Image.Image):
+        """send img to epaper RAM and do a full refresh
+
+        :img: must have the correct dimension (WIDTH, HEIGHT)
+
+        """
+        pass
+
+    @abstractmethod
     def clear(self):
         """clear the e-paper to white
 
