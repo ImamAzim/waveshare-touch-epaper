@@ -68,6 +68,13 @@ class BaseEpaper(object, metaclass=ABCMeta):
         """
         pass
 
+    @abstractmethod
+    def sleep(self):
+        """enter deep sleep mode
+
+        """
+        pass
+
 
 class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
     """for this mock, no need of gpio port or spi and epaper display.
@@ -96,6 +103,9 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
 
     def close(self):
         logging.info('mock close port epd')
+
+    def sleep(self):
+        logging.info('mock: enter sleep mode')
 
 
 class EpaperException(Exception):
