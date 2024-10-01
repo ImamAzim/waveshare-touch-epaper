@@ -48,6 +48,9 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
     def HEIGHT(self):
         return 122
 
+    def full_update(self):
+        logging.info('full update mock')
+
 
 class EpaperException(Exception):
     pass
