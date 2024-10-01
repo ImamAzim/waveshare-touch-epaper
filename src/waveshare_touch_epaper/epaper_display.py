@@ -39,6 +39,13 @@ class BaseEpaper(object, metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def close(self):
+        """close the port so that display consume 0V
+
+        """
+        pass
+
+    @abstractmethod
     def full_update(self):
         """initialization. should be called when the screen start working,
         after exiting sleep mode or for a full refresh
