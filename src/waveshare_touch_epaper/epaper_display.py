@@ -39,6 +39,25 @@ class BaseEpaper(object, metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def __enter__(self):
+        """open port and full update
+        :returns: self
+
+        """
+        pass
+
+    @abstractmethod
+    def __exit__(self, exc_type, exc_value, traceback):
+        """exit the context manager. enter sleep mode and close all ports
+
+        :exc_type: None if exited without exception
+        :exc_value: None if exited without exception
+        :traceback: None if exited without exception
+
+        """
+        pass
+
+    @abstractmethod
     def close(self):
         """close the port so that display consume 0V
 
