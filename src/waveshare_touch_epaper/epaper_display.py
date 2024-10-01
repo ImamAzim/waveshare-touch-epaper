@@ -18,13 +18,22 @@ class MetaEpaper(ABCMeta):
 class BaseEpaper(object, metaclass=ABCMeta):
 
     """Base class for epaper, define interface with abstract methid. """
-
     @abstractproperty
-    def WIDTH(self):
+    def WIDTH(self) -> int:
+        """width of screen in number of pixels"""
         pass
 
     @abstractproperty
-    def HEIGHT(self):
+    def HEIGHT(self) -> int:
+        """height of screen in number of pixels"""
+        pass
+
+    @abstractmethod
+    def full_update(self):
+        """initialization. should be called when the screen start working
+        and after exiting sleep mode
+
+        """
         pass
 
 
