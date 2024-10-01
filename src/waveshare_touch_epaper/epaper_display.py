@@ -73,16 +73,9 @@ class BaseEpaper(object, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def partial_update(self):
-        """should be called after an image is displayed with full refresh
-        :returns: TODO
-
-        """
-        pass
-
-    @abstractmethod
     def display(self, img: Image.Image, full: bool):
         """send img to epaper RAM and do a full or partial refresh
+        (partial update will be called if full refresh)
 
         :img: that will be displayed
         :full: if True, apply a full refresh, otherise a partial one
@@ -121,7 +114,7 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
     def full_update(self):
         logging.info('full update mock')
 
-    def partial_update(self):
+    def _partial_update(self):
         logging.info('partial update mock')
 
     def clear(self):
@@ -139,6 +132,8 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
 
     def display(self, img: Image.Image, full=True):
         img.show()
+        if full:
+            self._partial_update()
 
     def __enter__(self):
         self.open()
