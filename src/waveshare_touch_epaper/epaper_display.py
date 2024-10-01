@@ -59,6 +59,9 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
     def full_update(self):
         logging.info('full update mock')
 
+    def partial_update(self):
+        logging.info('partial update mock')
+
 
 class EpaperException(Exception):
     pass
