@@ -23,6 +23,7 @@ dependencies = [
 	'smbus3',
 	'spidev',
 	'numpy',
+	'pillow',
 ]
 
 [project.optional-dependencies]
