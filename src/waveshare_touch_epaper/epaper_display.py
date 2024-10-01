@@ -73,12 +73,13 @@ class BaseEpaper(object, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def display(self, img: Image.Image, full: bool):
+    def display(self, img: Image.Image, full: bool, wait: bool):
         """send img to epaper RAM and do a full or partial refresh
         (partial update will be called if full refresh)
 
         :img: that will be displayed
         :full: if True, apply a full refresh, otherise a partial one
+        :wait: if True will wait for busy PIN(?)
         :raise EpaperException: when img has incorrect dimension
 
         """
@@ -130,7 +131,7 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
     def sleep(self):
         logging.info('mock: enter sleep mode')
 
-    def display(self, img: Image.Image, full=True):
+    def display(self, img: Image.Image, full=True, wait=False):
         img.show()
         if full:
             self._partial_update()
