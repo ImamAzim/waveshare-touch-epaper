@@ -44,6 +44,12 @@ class BaseEpaper(object, metaclass=ABCMeta):
         """
         pass
 
+    @abstractmethod
+    def clear(self):
+        """clear the screen
+
+        """
+        pass
 
 
 class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
