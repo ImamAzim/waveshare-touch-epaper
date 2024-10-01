@@ -81,10 +81,11 @@ class BaseEpaper(object, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def display_full(self, img: Image.Image):
-        """send img to epaper RAM and do a full refresh
+    def display(self, img: Image.Image, full: bool):
+        """send img to epaper RAM and do a full or partial refresh
 
         :img: that will be displayed
+        :full: if True, apply a full refresh, otherise a partial one
         :raise EpaperException: when img has incorrect dimension (WIDTH, HEIGHT)
 
         """
