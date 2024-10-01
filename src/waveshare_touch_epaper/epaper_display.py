@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 import logging
 
 
-from PIL import Ima
+from PIL import Image
 
 epaper_models = dict()
 
@@ -72,8 +72,8 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
         logging.info('partial update mock')
 
     def clear(self):
-        img = 
-        pass
+        img = Image.new('1', (self.WIDTH, self.HEIGHT), 255)
+        img.show()
 
 
 class EpaperException(Exception):
