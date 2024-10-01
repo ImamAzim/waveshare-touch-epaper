@@ -91,6 +91,12 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
         img = Image.new('1', (self.WIDTH, self.HEIGHT), 255)
         img.show()
 
+    def open(self):
+        logging.info('mock open port epd')
+
+    def close(self):
+        logging.info('mock close port epd')
+
 
 class EpaperException(Exception):
     pass
