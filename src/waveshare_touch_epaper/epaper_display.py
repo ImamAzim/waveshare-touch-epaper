@@ -36,6 +36,14 @@ class BaseEpaper(object, metaclass=ABCMeta):
         """
         pass
 
+    @abstractmethod
+    def partial_update(self):
+        """should be called after an image is displayed with full refresh
+        :returns: TODO
+
+        """
+        pass
+
 
 
 class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
