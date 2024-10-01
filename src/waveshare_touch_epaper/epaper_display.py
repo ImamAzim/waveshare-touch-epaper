@@ -86,7 +86,7 @@ class BaseEpaper(object, metaclass=ABCMeta):
 
         :img: that will be displayed
         :full: if True, apply a full refresh, otherise a partial one
-        :raise EpaperException: when img has incorrect dimension (WIDTH, HEIGHT)
+        :raise EpaperException: when img has incorrect dimension
 
         """
         pass
@@ -136,6 +136,9 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
 
     def sleep(self):
         logging.info('mock: enter sleep mode')
+
+    def display(self, img: Image.Image, full=True):
+        img.show()
 
     def __enter__(self):
         self.open()
