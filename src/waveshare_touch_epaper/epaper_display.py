@@ -101,8 +101,8 @@ class BaseEpaper(object, metaclass=ABCMeta):
 
 
 class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
-    """for this mock, no need of gpio port or spi and epaper display.
-    image are shown on desktop with pillow"""
+    """mock interface for epaper display, 2.13 inch. no need of gpio, the image are displayed
+    on the screen with pillow module"""
 
     @property
     def WIDTH(self):

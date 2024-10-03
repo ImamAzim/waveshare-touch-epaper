@@ -71,8 +71,8 @@ class BaseTouchScreen(object, metaclass=ABCMeta):
 
 class GT1151Mock(BaseTouchScreen, metaclass=MetaTouchScreen):
 
-    """mock of gt1151 touch screen. the touch are replaced with
-    input of keyboard. There is no need ot gpio"""
+    """mock touch screen interface of gt1151 (2.13 inch epaper display).
+    the touch are replaced with input of keyboard. There is no need of gpio"""
 
     def input(self):
         """ touch is replaced by input """
@@ -109,7 +109,7 @@ class TouchEpaperException(Exception):
 
 class GT1151(BaseTouchScreen, metaclass=MetaTouchScreen):
 
-    """touch screen part of the 2.13 inch touch epaper display"""
+    """touch screen class for gt1151 (2.13 inch epaper display)"""
 
     _TRST = 22
     _INT = 27
