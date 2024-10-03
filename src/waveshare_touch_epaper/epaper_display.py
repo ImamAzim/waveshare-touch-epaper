@@ -101,13 +101,8 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
     """mock interface for epaper display, 2.13 inch. no need of gpio, the image are displayed
     on the screen with pillow module"""
 
-    @property
-    def WIDTH(self):
-        return 250
-
-    @property
-    def HEIGHT(self):
-        return 122
+    WIDTH = 250
+    HEIGHT = 122
 
     def full_update(self):
         logging.info('full update mock')
@@ -148,4 +143,6 @@ class EpaperException(Exception):
 
 
 class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
-    pass
+
+    WIDTH = 250
+    HEIGHT = 122
