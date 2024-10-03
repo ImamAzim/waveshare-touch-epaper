@@ -399,7 +399,7 @@ class GT1151(BaseTouchScreen, metaclass=MetaTouchScreen):
             logging.exception(msg)
             raise TouchEpaperException()
 
-    def input(self):
+    def input(self, timeout: int=None):
         self._check_if_started()
         self._check_if_stopped()
 
@@ -410,9 +410,13 @@ class GT1151(BaseTouchScreen, metaclass=MetaTouchScreen):
         new_coord = self._x[0], self._y[0], self._s[0]
         self._touch_detected.clear()
         while new_coord == old_coord:
-            self._touch_detected.wait()
-            new_coord = self._x[0], self._y[0], self._s[0]
-            self._touch_detected.clear()
+            return_flag = self._touch_detected.wait(timeout=timeout)
+            if return_flag:
+                new_coord = self._x[0], self._y[0], self._s[0]
+                self._touch_detected.clear()
+            else:
+                msg = 'no touch detected during timout'
+                raise TouchEpaperException(msg)
         return new_coord
 
     def wait_for_gesture(self, gesture='left_slide'):
