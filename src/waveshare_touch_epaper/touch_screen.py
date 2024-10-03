@@ -399,7 +399,7 @@ class GT1151(BaseTouchScreen, metaclass=MetaTouchScreen):
             logging.exception(msg)
             raise TouchEpaperException()
 
-    def input(self, timeout: int=None):
+    def input(self, timeout: int = None):
         self._check_if_started()
         self._check_if_stopped()
 
