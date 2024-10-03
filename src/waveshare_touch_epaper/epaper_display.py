@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod 
 import logging
 
 
@@ -21,15 +21,12 @@ class MetaEpaper(ABCMeta):
 class BaseEpaper(object, metaclass=ABCMeta):
 
     """Base class for epaper, define interface with abstract methid. """
-    @abstractproperty
-    def WIDTH(self) -> int:
-        """width of screen in number of pixels"""
-        pass
 
-    @abstractproperty
-    def HEIGHT(self) -> int:
-        """height of screen in number of pixels"""
-        pass
+    WIDTH: int = NotImplemented
+    """width of screen in number of pixels"""
+
+    HEIGHT: int = NotImplemented
+    """height of screen in number of pixels"""
 
     @abstractmethod
     def open(self):
