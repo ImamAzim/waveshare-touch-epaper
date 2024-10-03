@@ -4,6 +4,9 @@ import logging
 from threading import Event
 
 
+from inputimeout import inputimeout, TimeoutOccurred
+
+
 from smbus3 import SMBus
 import gpiozero
 
@@ -29,8 +32,8 @@ class BaseTouchScreen(object, metaclass=ABCMeta):
     def input(self, timeout: int):
         """ block until a tap is detected. unblock only if tap coordinates
         have moved or after a timeout.
-        :timeout: if timeout is a positive number, it blocks at most timeout seconds
-        and raises TouchEpaperException if no input detected
+        :timeout: if timeout is a positive number, it blocks at most timeout
+        second and raises TouchEpaperException if no input detected
         :returns: X, Y, S coordinates of one touch
 
         """
@@ -76,11 +79,16 @@ class GT1151Mock(BaseTouchScreen, metaclass=MetaTouchScreen):
     """mock touch screen interface of gt1151 (2.13 inch epaper display).
     the touch are replaced with input of keyboard. There is no need of gpio"""
 
-    def input(self):
+    def input(self, timeout=None):
         """ touch is replaced by input """
-        x_str = input('x=')
-        y_str = input('y=')
-        s_str = input('s=')
+        try:
+            x_str = inputimeout(prompt='x=', timeout=timeout)
+            y_str = inputimeout(prompt='y=', timeout=timeout)
+            s_str = inputimeout(prompt='s=', timeout=timeout)
+        except TimeoutOccurred:
+            msg = 'no input detected during timeout'
+            raise TouchEpaperException(msg)
+
         return int(x_str), int(y_str), int(s_str)
 
     def wait_for_gesture(self):
