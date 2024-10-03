@@ -26,9 +26,11 @@ class BaseTouchScreen(object, metaclass=ABCMeta):
     abstraction to provide interface of any touchscreen class"""
 
     @abstractmethod
-    def input(self):
+    def input(self, timeout: int):
         """ block until a tap is detected. unblock only if tap coordinates
-        have moved.
+        have moved or after a timeout.
+        :timeout: if timeout is a positive number, it blocks at most timeout seconds
+        and raises TouchEpaperException if no input detected
         :returns: X, Y, S coordinates of one touch
 
         """
