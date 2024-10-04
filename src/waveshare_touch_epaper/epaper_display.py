@@ -146,6 +146,13 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     WIDTH = 250
     HEIGHT = 122
+    _MAX_PARTIAL_REFRESH = 50
+
+    def __init__(self):
+        """initialise epd
+
+        """
+        self._remaining_partial_refresh = None
 
     def full_update(self):
         logging.info('full update mock')
@@ -167,9 +174,15 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         logging.info('mock: enter sleep mode')
 
     def display(self, img: Image.Image, full=True, wait=False):
-        img.show()
         if full:
+            pass
+            self._remaining_partial_refresh = self._MAX_PARTIAL_REFRESH
             self._partial_update()
+        else:
+            if self._remaining_partial_refresh == 0:
+                msg = 'too many consecutive partial refresh. need a full refresh'
+                raise EpaperException(msg)
+            self._remaining_partial_refresh -= 1
 
     def __enter__(self):
         self.open()
