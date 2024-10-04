@@ -11,7 +11,7 @@ def touch_and_display_loop():
         height = EPD2in13.HEIGHT
         img = Image.new('1', (width, height), 255)
         draw = ImageDraw.Draw(img)
-        draw.text(width/2, height/2, 'touch me!')
+        draw.text((width/2, height/2), 'touch me!')
         with GT1151() as gt, EPD2in13() as epd:
             epd.display(img, full=True)
             while True:
