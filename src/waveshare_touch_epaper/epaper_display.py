@@ -180,7 +180,13 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._gpio_busy = gpiozero.Button(self._BUSY_PIN, pull_up=False)
 
     def close(self):
-        logging.info('mock close port epd')
+        logging.info('close port epd')
+        self._spi.close()
+        self._gpio_rst.off()
+        self._gpio_dc.off()
+        self._gpio_rst.close()
+        self._gpio_dc.close()
+        self._gpio_busy.close()
 
     def full_update(self):
         logging.info('full update mock')
