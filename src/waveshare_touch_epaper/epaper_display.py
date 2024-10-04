@@ -158,6 +158,9 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     _ADRESS = 0x14
 
+    _SPI_MAXSPEED = 10000000
+    _SPI_MODE = 0b00
+
     def __init__(self):
         """initialise epd
 
@@ -178,6 +181,9 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._gpio_rst = gpiozero.LED(self._RST_PIN)
         self._gpio_dc = gpiozero.LED(self._DC_PIN)
         self._gpio_busy = gpiozero.Button(self._BUSY_PIN, pull_up=False)
+
+        self._spi.max_speed_hz = self._SPI_MAXSPEED
+        self._spi.mode = self._SPI_MODE
 
     def close(self):
         logging.info('close port epd')
