@@ -148,6 +148,13 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     HEIGHT = 122
     _MAX_PARTIAL_REFRESH = 50
 
+    _RST_PIN = 17
+    _DC_PIN = 25
+    _CS_PIN = 8
+    _BUSY_PIN = 24
+
+    _ADRESS = 0x14
+
     def __init__(self):
         """initialise epd
 
@@ -166,6 +173,10 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def open(self):
         logging.info('mock open port epd')
+        spi     = spidev.SpiDev(0, 0)
+        # GPIO_RST_PIN    = gpiozero.LED(EPD_RST_PIN)
+        # GPIO_DC_PIN     = gpiozero.LED(EPD_DC_PIN)
+        # GPIO_BUSY_PIN   = gpiozero.Button(EPD_BUSY_PIN, pull_up = False)
 
     def close(self):
         logging.info('mock close port epd')
