@@ -1,8 +1,11 @@
-from abc import ABCMeta, abstractmethod 
+from abc import ABCMeta, abstractmethod
 import logging
 
 
+import spidev
+import gpiozero
 from PIL import Image
+
 
 epaper_models = dict()
 
@@ -98,8 +101,8 @@ class BaseEpaper(object, metaclass=ABCMeta):
 
 
 class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
-    """mock interface for epaper display, 2.13 inch. no need of gpio, the image are displayed
-    on the screen with pillow module"""
+    """mock interface for epaper display, 2.13 inch. no need of gpio,
+    the image are displayed on the screen with pillow module"""
 
     WIDTH = 250
     HEIGHT = 122
@@ -171,11 +174,10 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self.close()
 
     def open(self):
-        logging.info('mock open port epd')
-        spi     = spidev.SpiDev(0, 0)
-        # GPIO_RST_PIN    = gpiozero.LED(EPD_RST_PIN)
-        # GPIO_DC_PIN     = gpiozero.LED(EPD_DC_PIN)
-        # GPIO_BUSY_PIN   = gpiozero.Button(EPD_BUSY_PIN, pull_up = False)
+        self._spi = spidev.SpiDev(0, 0)
+        self._gpio_rst = gpiozero.LED(self._RST_PIN)
+        self._gpio_dc = gpiozero.LED(self._DC_PIN)
+        self._gpio_busy = gpiozero.Button(self._BUSY_PIN, pull_up=False)
 
     def close(self):
         logging.info('mock close port epd')
@@ -200,7 +202,6 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             self._partial_update()
         else:
             if self._remaining_partial_refresh == 0:
-                msg = 'too many consecutive partial refresh. need a full refresh'
+                msg = 'too many partial refresh. need a full refresh'
                 raise EpaperException(msg)
             self._remaining_partial_refresh -= 1
-
