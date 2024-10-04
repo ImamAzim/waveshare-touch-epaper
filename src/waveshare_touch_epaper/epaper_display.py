@@ -215,7 +215,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def _send_command(self, command):
         pass
 
-    def _send_data(self):
+    def _send_data(self, data):
         pass
 
     def sleep(self):
