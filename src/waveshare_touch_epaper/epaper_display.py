@@ -161,15 +161,14 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         """
         self._remaining_partial_refresh = None
 
-    def full_update(self):
-        logging.info('full update mock')
+    def __enter__(self):
+        self.open()
+        self.full_update()
+        return self
 
-    def _partial_update(self):
-        logging.info('partial update mock')
-
-    def clear(self):
-        img = Image.new('1', (self.WIDTH, self.HEIGHT), 255)
-        img.show()
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.sleep()
+        self.close()
 
     def open(self):
         logging.info('mock open port epd')
@@ -181,8 +180,18 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def close(self):
         logging.info('mock close port epd')
 
+    def full_update(self):
+        logging.info('full update mock')
+
     def sleep(self):
         logging.info('mock: enter sleep mode')
+
+    def _partial_update(self):
+        logging.info('partial update mock')
+
+    def clear(self):
+        img = Image.new('1', (self.WIDTH, self.HEIGHT), 255)
+        img.show()
 
     def display(self, img: Image.Image, full=True, wait=False):
         if full:
@@ -195,11 +204,3 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
                 raise EpaperException(msg)
             self._remaining_partial_refresh -= 1
 
-    def __enter__(self):
-        self.open()
-        self.full_update()
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.sleep()
-        self.close()
