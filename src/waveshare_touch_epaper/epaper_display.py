@@ -1,3 +1,4 @@
+import time
 from abc import ABCMeta, abstractmethod
 import logging
 
@@ -180,7 +181,9 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._spi = spidev.SpiDev(0, 0)
         self._gpio_rst = gpiozero.LED(self._RST_PIN)
         self._gpio_dc = gpiozero.LED(self._DC_PIN)
-        self._gpio_busy = gpiozero.Button(self._BUSY_PIN, pull_up=False)
+        self._gpio_busy = gpiozero.Button(
+                self._BUSY_PIN,
+                pull_up=False)
 
         self._spi.max_speed_hz = self._SPI_MAXSPEED
         self._spi.mode = self._SPI_MODE
@@ -195,7 +198,25 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._gpio_busy.close()
 
     def full_update(self):
-        logging.info('full update mock')
+        logging.info('epd full update')
+        self._reset()
+
+    def _reset(self):
+        self._gpio_rst.on()
+        time.sleep(0.02)
+        self._gpio_rst.off()
+        time.sleep(0.002)
+        self._gpio_rst.on()
+        time.sleep(0.02)
+
+    def _wait_busy(self):
+        pass
+
+    def _send_command(self, command):
+        pass
+
+    def _send_data(self):
+        pass
 
     def sleep(self):
         logging.info('mock: enter sleep mode')
