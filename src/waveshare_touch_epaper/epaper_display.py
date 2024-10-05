@@ -162,6 +162,10 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     _SPI_MAXSPEED = 10000000
     _SPI_MODE = 0b00
 
+    _COMMAND = dict(
+            reset=0x12,
+            )
+
     def __init__(self):
         """initialise epd
 
@@ -212,7 +216,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def _wait_busy(self):
         self._gpio_busy.wait_for_press()
 
-    def _send_command(self, command):
+    def _send_command(self, cmd_key: str):
+        command = self._COMMAND.get(cmd_key)
         self._gpio_dc.off()
         self._spi.writebytes([command])
 
