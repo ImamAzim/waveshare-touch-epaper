@@ -169,6 +169,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             set_ram_x=0x44,
             set_ram_y=0x45,
             border_waveform_control=0x3c,
+            temperature_sensor_control=0x18,
             )
 
     def __init__(self):
@@ -179,44 +180,65 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def __enter__(self):
         self.open()
-        self.full_update()
         return self
 
+    def open(self):
+        self._power_on()
+        self._set_initial_configuration()
+        self._send_initialization_code()
+
+    def close(self):
+        self._power_off()
+
     def __exit__(self, exc_type, exc_value, traceback):
-        self.sleep()
         self.close()
 
-    def open(self):
-        self._spi = spidev.SpiDev(0, 0)
+    def _power_on(self):
+        logging.info('power on')
+        # TODO: check VCI pin
         self._gpio_rst = gpiozero.LED(self._RST_PIN)
         self._gpio_dc = gpiozero.LED(self._DC_PIN)
         self._gpio_busy = gpiozero.Button(
                 self._BUSY_PIN,
                 pull_up=False)
+        time.sleep(0.01)
 
+    def _set_initial_configuration(self):
+        logging.info('set initial configuration')
+        self._spi = spidev.SpiDev(0, 0)
         self._spi.max_speed_hz = self._SPI_MAXSPEED
         self._spi.mode = self._SPI_MODE
+        self._hw_reset()
+        self._send_command('reset')
+        time.sleep(0.01)
 
-    def close(self):
-        logging.info('close port epd')
+    def _send_initialization_code(self):
+        logging.info('send initialization code')
+        self._set_gate_driver_output()
+        self._set_display_RAM_size(0, self.WIDTH-1, 0, self.HEIGHT-1)
+        self._set_panel_border()
+
+    def _load_waveform_lut(self):
+
+
+    def _power_off(self):
+        logging.info('power off')
+        self.sleep()
         self._spi.close()
+        # TODO: check VCI pin
         self._gpio_rst.off()
         self._gpio_dc.off()
         self._gpio_rst.close()
         self._gpio_dc.close()
         self._gpio_busy.close()
 
-    def full_update(self):
-        logging.info('epd full update')
-        # set init configuration
-        self._hw_reset()
-        self._wait_busy()
-        self._send_command('reset')
-        self._wait_busy()
-        # set init code
-        self._set_gate_driver_output()
-        self._set_display_RAM_size(0, self.WIDTH-1, 0, self.HEIGHT-1)
-        self._set_panel_border()
+    def _hw_reset(self):
+        self._gpio_rst.on()
+        time.sleep(0.02)
+        self._gpio_rst.off()
+        time.sleep(0.002)
+        self._gpio_rst.on()
+        time.sleep(0.02)
 
     def _set_gate_driver_output(self):
         self._send_command('driver_output_control')
@@ -243,14 +265,17 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def _set_panel_border(self):
         self._send_command('border_waveform_control')
+        vbd_opt = 0b00 << 6
+        vbd_level = 0b00 << 4
+        gs_control = 0b1 << 2  # follow LUT
+        gs_setting = 0b01  # LUT1
+        data = gs_control + gs_setting + vbd_level + vbd_opt
+        self._send_data(data)
 
-    def _hw_reset(self):
-        self._gpio_rst.on()
-        time.sleep(0.02)
-        self._gpio_rst.off()
-        time.sleep(0.002)
-        self._gpio_rst.on()
-        time.sleep(0.02)
+    def _sense_temperature(self):
+        self._send_command('temperature_sense_control')
+        pass
+
 
     def _wait_busy(self):
         self._gpio_busy.wait_for_press()
