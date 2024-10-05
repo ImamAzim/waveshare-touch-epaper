@@ -164,6 +164,11 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     _COMMAND = dict(
             reset=0x12,
+            driver_output_control=0x01,
+            data_entry_mode_setting=0x11,
+            set_ram_x=0x44,
+            set_ram_y=0x45,
+            border_waveform_control=0x3c,
             )
 
     def __init__(self):
@@ -203,7 +208,34 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def full_update(self):
         logging.info('epd full update')
+        # set init configuration
         self._hw_reset()
+        self._wait_busy()
+        self._send_command('reset')
+        self._wait_busy()
+        # set init code
+        self._set_gate_driver_output()
+        self._set_display_RAM_size()
+        self._set_panel_border()
+
+    def _set_gate_driver_output(self):
+        self._send_command('driver_output_control')
+        self._send_data(0xf9)
+        self._send_data(0x00)
+        self._send_data(0x00)
+
+    def _set_display_RAM_size(self):
+        self._send_command('data_entry_mode_setting')
+        self._send_data(0b011)
+        self._send_command('set_ram_x')
+        self._send_data(0x00)
+        self._send_data(0x15)
+        self._send_command('set_ram_y')
+        self._send_data(0x00)
+        self._send_data(0x00)
+
+    def _set_panel_border(self):
+        self._send_command('border_waveform_control')
 
     def _hw_reset(self):
         self._gpio_rst.on()
@@ -215,6 +247,11 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def _wait_busy(self):
         self._gpio_busy.wait_for_press()
+
+    def _split_low_hi_bytes(large_byte):
+        low_byte = large_byte & 0xff
+        hi_byte = large_byte >> 8
+        return low_byte, hi_byte
 
     def _send_command(self, cmd_key: str):
         command = self._COMMAND.get(cmd_key)
