@@ -274,8 +274,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def _sense_temperature(self):
         self._send_command('temperature_sense_control')
-        pass
-
+        self._send_data(0x80)
 
     def _wait_busy(self):
         self._gpio_busy.wait_for_press()
