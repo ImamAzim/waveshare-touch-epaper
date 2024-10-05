@@ -199,9 +199,9 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def full_update(self):
         logging.info('epd full update')
-        self._reset()
+        self._hw_reset()
 
-    def _reset(self):
+    def _hw_reset(self):
         self._gpio_rst.on()
         time.sleep(0.02)
         self._gpio_rst.off()
