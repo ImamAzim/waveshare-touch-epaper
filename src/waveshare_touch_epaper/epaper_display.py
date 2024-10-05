@@ -215,7 +215,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._wait_busy()
         # set init code
         self._set_gate_driver_output()
-        self._set_display_RAM_size()
+        self._set_display_RAM_size(0, self.WIDTH-1, 0, self.HEIGHT-1)
         self._set_panel_border()
 
     def _set_gate_driver_output(self):
@@ -228,17 +228,18 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_command('data_entry_mode_setting')
         self._send_data(0b011)
         self._send_command('set_ram_x')
-        self._send_data(0x00)
-        self._send_data(0x15)
+        # coord are divided by 8 for RAM?
+        self._send_data(x_start >> 3)
+        self._send_data(x_end >> 3)
         self._send_command('set_ram_y')
-        data = 0x000
-        low_byte, large_byte = self._split_low_hi_bytes(data)
+        data = y_start
+        low_byte, hi_byte = self._split_low_hi_bytes(data)
         self._send_data(low_byte)
-        self._send_data(large_byte)
-        data = 0x127
-        low_byte, large_byte = self._split_low_hi_bytes(data)
+        self._send_data(hi_byte)
+        data = y_end
+        low_byte, hi_byte = self._split_low_hi_bytes(data)
         self._send_data(low_byte)
-        self._send_data(large_byte)
+        self._send_data(hi_byte)
 
     def _set_panel_border(self):
         self._send_command('border_waveform_control')
