@@ -213,10 +213,12 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._gpio_busy.wait_for_press()
 
     def _send_command(self, command):
-        pass
+        self._gpio_dc.off()
+        self._spi.writebytes([command])
 
     def _send_data(self, data):
-        pass
+        self._gpio_dc.on()
+        self._spi.writebytes([data])
 
     def sleep(self):
         logging.info('mock: enter sleep mode')
