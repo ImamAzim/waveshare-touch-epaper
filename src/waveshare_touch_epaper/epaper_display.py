@@ -219,7 +219,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._set_panel_border()
 
     def _load_waveform_lut(self):
-
+        self._sense_temperature()
+        self._wait_busy_low()
 
     def _power_off(self):
         logging.info('power off')
@@ -276,7 +277,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_command('temperature_sense_control')
         self._send_data(0x80)
 
-    def _wait_busy(self):
+    def _wait_busy_low(self):
         self._gpio_busy.wait_for_press()
 
     def _split_low_hi_bytes(large_byte):
