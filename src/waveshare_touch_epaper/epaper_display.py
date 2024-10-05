@@ -105,8 +105,8 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
     """mock interface for epaper display, 2.13 inch. no need of gpio,
     the image are displayed on the screen with pillow module"""
 
-    WIDTH = 250
-    HEIGHT = 122
+    WIDTH = 122
+    HEIGHT = 250
 
     def full_update(self):
         logging.info('full update mock')
@@ -148,8 +148,8 @@ class EpaperException(Exception):
 
 class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
-    WIDTH = 250
-    HEIGHT = 122
+    WIDTH = 122
+    HEIGHT = 250
     _MAX_PARTIAL_REFRESH = 50
 
     _RST_PIN = 17
@@ -224,15 +224,21 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_data(0x00)
         self._send_data(0x00)
 
-    def _set_display_RAM_size(self):
+    def _set_display_RAM_size(self, x_start, x_end, y_start, y_end):
         self._send_command('data_entry_mode_setting')
         self._send_data(0b011)
         self._send_command('set_ram_x')
         self._send_data(0x00)
         self._send_data(0x15)
         self._send_command('set_ram_y')
-        self._send_data(0x00)
-        self._send_data(0x00)
+        data = 0x000
+        low_byte, large_byte = self._split_low_hi_bytes(data)
+        self._send_data(low_byte)
+        self._send_data(large_byte)
+        data = 0x127
+        low_byte, large_byte = self._split_low_hi_bytes(data)
+        self._send_data(low_byte)
+        self._send_data(large_byte)
 
     def _set_panel_border(self):
         self._send_command('border_waveform_control')
