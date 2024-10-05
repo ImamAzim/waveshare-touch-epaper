@@ -170,6 +170,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             set_ram_y=0x45,
             border_waveform_control=0x3c,
             temperature_sensor_control=0x18,
+            deep_sleep_mode=0x10,
             )
 
     def __init__(self):
@@ -186,6 +187,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._power_on()
         self._set_initial_configuration()
         self._send_initialization_code()
+        self._load_waveform_lut()
 
     def close(self):
         self._power_off()
@@ -224,7 +226,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def _power_off(self):
         logging.info('power off')
-        self.sleep()
+        self._deep_sleep()
         self._spi.close()
         # TODO: check VCI pin
         self._gpio_rst.off()
@@ -280,6 +282,9 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def _wait_busy_low(self):
         self._gpio_busy.wait_for_press()
 
+    def _deep_sleep(self):
+        self._send_command('deep_sleep_mode')
+
     def _split_low_hi_bytes(large_byte):
         low_byte = large_byte & 0xff
         hi_byte = large_byte >> 8
@@ -293,9 +298,6 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def _send_data(self, data):
         self._gpio_dc.on()
         self._spi.writebytes([data])
-
-    def sleep(self):
-        logging.info('mock: enter sleep mode')
 
     def _partial_update(self):
         logging.info('partial update mock')
