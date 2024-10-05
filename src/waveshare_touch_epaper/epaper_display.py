@@ -210,7 +210,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         time.sleep(0.02)
 
     def _wait_busy(self):
-        pass
+        self._gpio_busy.wait_for_press()
 
     def _send_command(self, command):
         pass
