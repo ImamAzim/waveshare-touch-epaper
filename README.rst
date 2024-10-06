@@ -35,6 +35,8 @@ If you work in a virtual environement, you will need first:
 
 Usage
 ========
+deprecated!
+TODO: rewrite this section after the refactor..
 
 
 To use a epaper display (to be changed):
