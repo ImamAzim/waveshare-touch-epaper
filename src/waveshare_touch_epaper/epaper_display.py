@@ -252,6 +252,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             y_start = 0
             x_end = self.WIDTH - 1
             y_end = self.HEIGHT - 1
+            coordinates = (x_start, x_send, y_start, y_end)
         self._process_display(byte_img, coordinates=coordinates, full_refresh=full_refresh)
 
     def _process_display(self, byte_img: bytearray, coordinates, full_refresh: bool):
@@ -261,7 +262,6 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             self._load_waveform_lut()
             self._write_image_and_drive_display_panel(byte_img)
             self._remaining_partial_refresh = self._MAX_PARTIAL_REFRESH
-            # self._partial_update()?
         else:
             if self._remaining_partial_refresh == 0:
                 msg = 'too many partial refresh. need a full refresh'
@@ -297,7 +297,11 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         logging.info('send initialization code')
         self._set_gate_driver_output()
         self._set_display_RAM_size(coords)
-        self._set_panel_border()
+        if coords = None:
+            vcom = False
+        else:
+            vcom = True
+        self._set_panel_border(vcom)
         self._set_display_source_mode()
 
     def _load_waveform_lut(self):
@@ -374,12 +378,19 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_data(low_byte)
         self._send_data(hi_byte)
 
-    def _set_panel_border(self):
+    def _set_panel_border(self, vcom=False):
         self._send_command('border_waveform_control')
-        vbd_opt = 0b00 << 6
+        if vcom:
+            vbd_opt = 0b10 << 6
+        else:
+            vbd_opt 0b00 << 6
         vbd_level = 0b00 << 4
-        gs_control = 0b1 << 2  # follow LUT
-        gs_setting = 0b01  # LUT1
+        if vcom:
+            gs_control = 0b0 << 2
+            gs_setting = 0b00
+        else:
+            gs_control = 0b1 << 2  # follow LUT
+            gs_setting = 0b01  # LUT1
         data = gs_control + gs_setting + vbd_level + vbd_opt
         self._send_data(data)
 
