@@ -201,6 +201,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def open(self):
         self._power_on()
         self._set_initial_configuration()
+        self.clear()
 
     def close(self):
         self._power_off()
