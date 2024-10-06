@@ -207,7 +207,9 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._load_waveform_lut()
         color = 0b1
         byte_color = 0xff * color
-        img = bytearray()
+        pixel_byte = byte_color.to_bytes(1, 'big')
+        img_bytes = pixel_byte * N
+        img = bytearray(img_bytes)
         self._write_image_and_drive_display_panel(img=img)
 
     def display(self, img: Image.Image, full=True, wait=False):
