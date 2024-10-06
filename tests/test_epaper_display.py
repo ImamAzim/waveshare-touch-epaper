@@ -21,7 +21,7 @@ def display():
         draw.text((x0, y0), 'hello world')
         t1 = time.time()
         epd.display(img)
-        t2 time.time()
+        t2 = time.time()
         print(t2-t1)
 
 
