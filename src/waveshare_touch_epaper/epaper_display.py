@@ -212,11 +212,17 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         if tuple (x_start, x_end, y_start, y_end) coord of window
 
         """
-        byte_img = self._get_mono_img_bytearray(color, coord)
         if coord is None:
             display_mode = 1
+            x_start = 0
+            y_start = 0
         else:
             display_mode = 2
+            x_start, x_end, y_start, y_end = coords
+        byte_img = self._get_mono_img_bytearray(
+                color,
+                coord,
+                )
         self._write_image_and_drive_display_panel(
                 byte_img,
                 x_start,
