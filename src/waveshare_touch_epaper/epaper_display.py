@@ -209,6 +209,10 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         if tuple (x_start, x_end, y_start, y_end) coord of window
 
         """
+        img = self._get_mono_img_bytearray(color, coord)
+        self._write_image_and_drive_display_panel(x_start, y_start, img=img)
+
+    def _get_mono_img_bytearray(self, color, coord):
         if coords is None:
             x_start = 0
             x_end = self.WIDTH - 1
@@ -221,9 +225,9 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         color = 0b1
         byte_color = 0xff * color
         pixel_byte = byte_color.to_bytes(1, 'big')
+        N = ((x_end - x_start + 1) >> 3) * (y_end - y_start + 1)
         img_bytes = pixel_byte * N
         img = bytearray(img_bytes)
-        self._write_image_and_drive_display_panel(x_start, y_start, img=img)
 
     def display(self, img: Image.Image, full=True, wait=False):
         if full:
