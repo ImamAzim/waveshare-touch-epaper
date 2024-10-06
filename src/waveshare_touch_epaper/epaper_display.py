@@ -218,7 +218,6 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
                 color,
                 coordinates,
                 )
-        print(len(byte_img))
         self._process_display(byte_img, coordinates=coordinates, full_refresh=full_refresh)
 
     def _get_mono_img_bytearray(self, color, coord):
