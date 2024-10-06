@@ -280,8 +280,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_command('data_entry_mode_setting')
         self._send_data(0b011)
         self._send_command('set_ram_x')
-        # coord are divided by 8 for RAM?
-        self._send_data(x_start >> 3)
+        self._send_data(x_start >> 3)  # adress div by 8 as bytes has 8 bits
         self._send_data(x_end >> 3)
         self._send_command('set_ram_y')
         data = y_start
