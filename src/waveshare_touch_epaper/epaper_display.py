@@ -223,6 +223,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
                 color,
                 coord,
                 )
+        self._send_initialization_code(coords)
+        self._load_waveform_lut()
         self._write_image_and_drive_display_panel(
                 byte_img,
                 x_start,
