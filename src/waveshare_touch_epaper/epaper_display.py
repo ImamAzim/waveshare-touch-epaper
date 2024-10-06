@@ -218,7 +218,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             y_start = 0
         else:
             display_mode = 2
-            x_start, x_end, y_start, y_end = coords
+            x_start, x_end, y_start, y_end = coord
         byte_img = self._get_mono_img_bytearray(
                 color,
                 coord,
@@ -237,7 +237,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             y_start = 0
             y_end = self.HEIGHT - 1
         else:
-            x_start, x_end, y_start, y_end = coords
+            x_start, x_end, y_start, y_end = coord
         self._send_initialization_code(coord)
         self._load_waveform_lut()
         color = 0b1
