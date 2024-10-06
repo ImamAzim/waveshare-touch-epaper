@@ -100,33 +100,26 @@ class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
     WIDTH = 122
     HEIGHT = 250
 
-    def full_update(self):
-        logging.info('full update mock')
-
-    def _partial_update(self):
-        logging.info('partial update mock')
-
     def clear(self):
+        logging.info('clear image')
         img = Image.new('1', (self.WIDTH, self.HEIGHT), 255)
         img.show()
 
     def open(self):
-        logging.info('mock open port epd')
+        logging.info('mock open epd')
 
     def close(self):
-        logging.info('mock close port epd')
+        logging.info('mock close epd')
 
     def sleep(self):
         logging.info('mock: enter sleep mode')
 
-    def display(self, img: Image.Image, full=True, wait=False):
+    def display(self, img: Image.Image, full_refresh=True):
         img.show()
-        if full:
-            self._partial_update()
 
     def __enter__(self):
         self.open()
-        self.full_update()
+        self.clear()
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
