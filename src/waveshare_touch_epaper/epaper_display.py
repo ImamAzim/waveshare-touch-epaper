@@ -65,13 +65,13 @@ class BaseEpaper(object, metaclass=ABCMeta):
         """
         pass
 
-    @abstractmethod
-    def full_update(self):
-        """initialization. should be called when the screen start working,
-        after exiting sleep mode or possibly before full refresh
+    # @abstractmethod
+    # def full_update(self):
+        # """initialization. should be called when the screen start working,
+        # after exiting sleep mode or possibly before full refresh
 
-        """
-        pass
+        # """
+        # pass
 
     @abstractmethod
     def display(self, img: Image.Image, full: bool, wait: bool):
@@ -93,12 +93,12 @@ class BaseEpaper(object, metaclass=ABCMeta):
         """
         pass
 
-    @abstractmethod
-    def sleep(self):
-        """enter deep sleep mode
+    # @abstractmethod
+    # def sleep(self):
+        # """enter deep sleep mode
 
-        """
-        pass
+        # """
+        # pass
 
 
 class EPD2in13Mock(BaseEpaper, metaclass=MetaEpaper):
