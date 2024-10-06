@@ -205,32 +205,19 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._power_off()
         self._close_all_port()
 
-    def clear(self, color=0b1, coord=None):
+    def clear(self, color=0b1, coordinates=None):
         """
         :color: 1 for white, 0 for black
         :coords: if None, full screen is cleared
-        if tuple (x_start, x_end, y_start, y_end) coord of window
+        if tuple (x_start, x_end, y_start, y_end) partial refresh in window
 
         """
-        if coord is None:
-            display_mode = 1
-            x_start = 0
-            y_start = 0
-        else:
-            display_mode = 2
-            x_start, x_end, y_start, y_end = coord
+        full_refresh = False if coordinates else True
         byte_img = self._get_mono_img_bytearray(
                 color,
-                coord,
+                coordinates,
                 )
-        self._send_initialization_code(coords)
-        self._load_waveform_lut()
-        self._write_image_and_drive_display_panel(
-                byte_img,
-                x_start,
-                y_start,
-                display_mode=display_mode,
-                )
+        self._process_display(byte_img, coordinates=coordinates, full_refresh=full_refresh)
 
     def _get_mono_img_bytearray(self, color, coord):
         if coord is None:
@@ -240,9 +227,6 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             y_end = self.HEIGHT - 1
         else:
             x_start, x_end, y_start, y_end = coord
-        self._send_initialization_code(coord)
-        self._load_waveform_lut()
-        color = 0b1
         byte_color = 0xff * color
         pixel_byte = byte_color.to_bytes(1, 'big')
         N = ((x_end - x_start + 1) >> 3) * (y_end - y_start + 1)
@@ -252,29 +236,34 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def _get_byte_img(self, img):
         raise NotImplementedError
-        pass
 
-    def display(self, img: Image.Image, full=True):
+    def display(self, img: Image.Image, full_refresh=True):
         byte_img = self._get_byte_img(img)
-        if full:
+        if full_refresh:
+            coordinates = None
+        else:
+            # TODO: compute smaller window size for img
+            x_start = 0
+            y_start = 0
+            x_end = self.WIDTH - 1
+            y_end = self.HEIGHT - 1
+        self._process_display(byte_img, coordinates=coordinates, full_refresh=full_refresh)
+
+    def _process_display(self, byte_img: bytearray, coordinates, full_refresh: bool):
+        if full_refresh:
             # set init config (hard reset?)
             self._send_initialization_code()
             self._load_waveform_lut()
             self._write_image_and_drive_display_panel(byte_img)
             self._remaining_partial_refresh = self._MAX_PARTIAL_REFRESH
-            self._partial_update()
+            # self._partial_update()?
         else:
             if self._remaining_partial_refresh == 0:
                 msg = 'too many partial refresh. need a full refresh'
                 raise EpaperException(msg)
+            raise NotImplementedError
             # TODO: set init config (soft reset?)
-            # TODO: compute window size for img
-            x_start = 0
-            y_start = 0
-            x_end = 121
-            y_end = 249
-            coords = (x_start, x_end, y_start, y_end)
-            self._send_initialization_code(coords)
+            self._send_initialization_code(coordinates)
             self._write_image_and_drive_display_panel(
                     byte_img,
                     x_start,
