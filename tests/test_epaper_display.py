@@ -23,6 +23,14 @@ def display():
         epd.display(img)
         t2 = time.time()
         print(t2-t1)
+        for i in range(9, 0, -1):
+            x0 = 0
+            y0 = epd.HEIGHT // 10 * i
+            draw.text((x0, y0), str(i))
+            t1 = time.time()
+            epd.display(img, full_refresh=False)
+            t2 = time.time()
+            print(t2-t1)
 
 
 if __name__ == '__main__':
