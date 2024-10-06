@@ -284,6 +284,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def _deep_sleep(self):
         self._send_command('deep_sleep_mode')
+        # TODO: check deep sleep mode 1 or 2
+        self._send_data(0x11)
 
     def _split_low_hi_bytes(large_byte):
         low_byte = large_byte & 0xff
