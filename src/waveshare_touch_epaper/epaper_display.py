@@ -172,6 +172,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             temperature_sensor_control=0x18,
             deep_sleep_mode=0x10,
             display_update_control=0x21,
+            set_ram_x_adress_counter=0x4e,
+            set_ram_y_adress_counter=0x4f,
             )
 
     def __init__(self):
@@ -214,10 +216,15 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             if self._remaining_partial_refresh == 0:
                 msg = 'too many partial refresh. need a full refresh'
                 raise EpaperException(msg)
-            # set init config (soft reset?)
-            coords = (0, 121, 0, 249)  # TODO: compute window size for img
+            # TODO: set init config (soft reset?)
+            # TODO: compute window size for img
+            x_start = 0
+            y_start = 0
+            x_end = 121
+            y_end = 249
+            coords = (x_start, x_end, y_start, y_end)
             self._send_initialization_code(coords)
-            self._write_image_and_drive_display_panel()
+            self._write_image_and_drive_display_panel(x_start, y_start)
             self._remaining_partial_refresh -= 1
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -247,8 +254,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._sense_temperature()
         self._wait_busy_low()
 
-    def _write_image_and_drive_display_panel(self):
-        self._write_img_data_in_ram()
+    def _write_image_and_drive_display_panel(self, x_start=0, y_start=0):
+        self._write_img_data_in_ram(x_start, y_start)
 
     def _power_off(self):
         logging.info('power off')
@@ -325,8 +332,11 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_command('temperature_sense_control')
         self._send_data(0x80)
 
-    def _write_img_data_in_ram(self):
-        pass
+    def _write_img_data_in_ram(self, x_start, y_start):
+        self._send_command('set_ram_x_adress_counter')
+        self._send_data(x_start>>3)
+        self._send_command('set_ram_y_adress_counter')
+        self._send_data(y_start)
 
     def _wait_busy_low(self):
         self._gpio_busy.wait_for_inactive()
