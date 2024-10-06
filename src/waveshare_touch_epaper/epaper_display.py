@@ -383,7 +383,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         if vcom:
             vbd_opt = 0b10 << 6
         else:
-            vbd_opt 0b00 << 6
+            vbd_opt = 0b00 << 6
         vbd_level = 0b00 << 4
         if vcom:
             gs_control = 0b0 << 2
