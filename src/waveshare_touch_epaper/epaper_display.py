@@ -394,7 +394,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_data(source_output_mode)
 
     def _sense_temperature(self):
-        self._send_command('temperature_sense_control')
+        self._send_command('temperature_sensor_control')
         self._send_data(0x80)
 
     def _write_img_data_in_ram(self, x_start, y_start, img: bytearray):
