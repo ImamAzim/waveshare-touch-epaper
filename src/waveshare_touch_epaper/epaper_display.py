@@ -269,6 +269,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
                 raise EpaperException(msg)
             self._fast_hw_reset()
             self._send_initialization_code(coordinates)
+            x_start = coordinates[0]
+            y_start = coordinates[2]
             self._write_image_and_drive_display_panel(
                     byte_img,
                     x_start,
