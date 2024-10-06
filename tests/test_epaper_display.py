@@ -19,7 +19,10 @@ def display():
         x0 = epd.WIDTH // 2
         y0 = epd.HEIGHT // 2
         draw.text((x0, y0), 'hello world')
+        t1 = time.time()
         epd.display(img)
+        t2 time.time()
+        print(t2-t1)
 
 
 if __name__ == '__main__':
