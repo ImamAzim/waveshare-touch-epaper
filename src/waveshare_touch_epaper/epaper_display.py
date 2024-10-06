@@ -241,7 +241,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         return img_byte_array
 
     def _get_byte_img(self, img):
-        img.convert('1').rotate(180, expand=True)
+        img = img.convert('1').rotate(180, expand=True)
         byte_img = bytearray(img.tobytes())
         return byte_img
 
