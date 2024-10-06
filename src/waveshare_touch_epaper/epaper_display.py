@@ -336,7 +336,9 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_command('set_ram_x_adress_counter')
         self._send_data(x_start>>3)
         self._send_command('set_ram_y_adress_counter')
-        self._send_data(y_start)
+        low_byte, hi_byte = self._split_low_hi_bytes(y_start)
+        self._send_data(low_byte)
+        self._send_data(hi_byte)
 
     def _wait_busy_low(self):
         self._gpio_busy.wait_for_inactive()
