@@ -294,7 +294,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         pass
 
     def _wait_busy_low(self):
-        self._gpio_busy.wait_for_press()
+        self._gpio_busy.wait_for_inactive()
 
     def _deep_sleep(self):
         self._send_command('deep_sleep_mode')
