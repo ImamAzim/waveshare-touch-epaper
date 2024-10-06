@@ -198,6 +198,27 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._power_off()
         self._close_all_port()
 
+    def clear(self):
+        img = Image.new('1', (self.WIDTH, self.HEIGHT), 255)
+        img.show()
+
+    def display(self, img: Image.Image, full=True, wait=False):
+        if full:
+            # set init config (hard reset?)
+            self._send_initialization_code()
+            self._load_waveform_lut()
+            self._write_image_and_drive_display_panel()
+            self._remaining_partial_refresh = self._MAX_PARTIAL_REFRESH
+            self._partial_update()
+        else:
+            if self._remaining_partial_refresh == 0:
+                msg = 'too many partial refresh. need a full refresh'
+                raise EpaperException(msg)
+            # set init config (soft reset?)
+            self._send_initialization_code()  # se smaller window?
+            self._write_image_and_drive_display_panel()
+            self._remaining_partial_refresh -= 1
+
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
@@ -318,24 +339,3 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def _partial_update(self):
         logging.info('partial update mock')
-
-    def clear(self):
-        img = Image.new('1', (self.WIDTH, self.HEIGHT), 255)
-        img.show()
-
-    def display(self, img: Image.Image, full=True, wait=False):
-        if full:
-            # set init config (hard reset?)
-            self._send_initialization_code()
-            self._load_waveform_lut()
-            self._write_image_and_drive_display_panel()
-            self._remaining_partial_refresh = self._MAX_PARTIAL_REFRESH
-            self._partial_update()
-        else:
-            if self._remaining_partial_refresh == 0:
-                msg = 'too many partial refresh. need a full refresh'
-                raise EpaperException(msg)
-            # set init config (soft reset?)
-            self._send_initialization_code()  # se smaller window?
-            self._write_image_and_drive_display_panel()
-            self._remaining_partial_refresh -= 1
