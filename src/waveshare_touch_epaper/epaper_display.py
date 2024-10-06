@@ -1,3 +1,4 @@
+import math
 import time
 from abc import ABCMeta, abstractmethod
 import logging
@@ -217,6 +218,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
                 color,
                 coordinates,
                 )
+        print(len(byte_img))
         self._process_display(byte_img, coordinates=coordinates, full_refresh=full_refresh)
 
     def _get_mono_img_bytearray(self, color, coord):
@@ -229,7 +231,11 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             x_start, x_end, y_start, y_end = coord
         byte_color = 0xff * color
         pixel_byte = byte_color.to_bytes(1, 'big')
-        N = ((x_end - x_start + 1) >> 3) * (y_end - y_start + 1)
+
+        window_width = math.ceil((x_end - x_start + 1) / 8)
+        window_height = (y_end - y_start + 1)
+        N = window_height * window_width
+
         img_bytes = pixel_byte * N
         img_byte_array = bytearray(img_bytes)
         return img_byte_array
