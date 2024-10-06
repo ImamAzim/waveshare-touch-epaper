@@ -224,6 +224,9 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._sense_temperature()
         self._wait_busy_low()
 
+    def _write_image_and_drive_display_panel(self):
+        self._write_img_data_in_ram()
+
     def _power_off(self):
         logging.info('power off')
         self._deep_sleep()
@@ -278,6 +281,9 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def _sense_temperature(self):
         self._send_command('temperature_sense_control')
         self._send_data(0x80)
+
+    def _write_img_data_in_ram(self):
+        pass
 
     def _wait_busy_low(self):
         self._gpio_busy.wait_for_press()
