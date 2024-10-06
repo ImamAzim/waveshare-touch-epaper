@@ -377,10 +377,16 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_data_array(img)
 
     def _set_softstart_setting(self):
-        self._send_command('booser_soft_start_control')
-        #TODO: send data
+        # keep default settings so do nothing
+        pass
+        # self._send_command('booser_soft_start_control')
+        # self._send_data(0x8b)
+        # self._send_data(0x9c)
+        # self._send_data(0x96)
+        # self._send_data(0x0f)
 
     def _drive_display_pannel(self):
+        #TODO: write func
         pass
 
     def _wait_busy_low(self):
