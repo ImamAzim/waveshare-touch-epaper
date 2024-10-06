@@ -202,15 +202,28 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._power_off()
         self._close_all_port()
 
-    def clear(self):
-        self._send_initialization_code()
+    def clear(self, color=0b1, coord=None):
+        """
+        :color: 1 for white, 0 for black
+        :coords: if None, full screen is cleared
+        if tuple (x_start, x_end, y_start, y_end) coord of window
+
+        """
+        if coords is None:
+            x_start = 0
+            x_end = self.WIDTH - 1
+            y_start = 0
+            y_end = self.HEIGHT - 1
+        else:
+            x_start, x_end, y_start, y_end = coords
+        self._send_initialization_code(coord)
         self._load_waveform_lut()
         color = 0b1
         byte_color = 0xff * color
         pixel_byte = byte_color.to_bytes(1, 'big')
         img_bytes = pixel_byte * N
         img = bytearray(img_bytes)
-        self._write_image_and_drive_display_panel(img=img)
+        self._write_image_and_drive_display_panel(x_start, y_start, img=img)
 
     def display(self, img: Image.Image, full=True, wait=False):
         if full:
