@@ -267,8 +267,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             if self._remaining_partial_refresh == 0:
                 msg = 'too many partial refresh. need a full refresh'
                 raise EpaperException(msg)
-            raise NotImplementedError
-            # TODO: set init config (soft reset?)
+            self._fast_hw_reset()
             self._send_initialization_code(coordinates)
             self._write_image_and_drive_display_panel(
                     byte_img,
@@ -343,6 +342,11 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         time.sleep(0.002)
         self._gpio_rst.on()
         time.sleep(0.02)
+
+    def _fast_hw_reset(self):
+        self._gpio_rst.off()
+        time.sleep(0.001)
+        self._gpio_rst.on()
 
     def _set_gate_driver_output(self):
         self._send_command('driver_output_control')
