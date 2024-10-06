@@ -212,8 +212,17 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         if tuple (x_start, x_end, y_start, y_end) coord of window
 
         """
-        img = self._get_mono_img_bytearray(color, coord)
-        self._write_image_and_drive_display_panel(x_start, y_start, img=img)
+        byte_img = self._get_mono_img_bytearray(color, coord)
+        if coord is None:
+            display_mode = 1
+        else:
+            display_mode = 2
+        self._write_image_and_drive_display_panel(
+                byte_img,
+                x_start,
+                y_start,
+                display_mode=2,
+                )
 
     def _get_mono_img_bytearray(self, color, coord):
         if coords is None:
@@ -236,7 +245,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         raise NotImplementedError
         pass
 
-    def display(self, img: Image.Image, full=True, wait=False):
+    def display(self, img: Image.Image, full=True):
         byte_img = self._get_byte_img(img)
         if full:
             # set init config (hard reset?)
