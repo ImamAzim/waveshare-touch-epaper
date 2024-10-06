@@ -176,6 +176,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             set_ram_y_adress_counter=0x4f,
             write_ram_bw=0x24,
             write_ram_red=0x26,
+            booster_soft_start_control=0x0c,
             )
 
     def __init__(self):
@@ -276,11 +277,16 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._set_display_source_mode()
 
     def _load_waveform_lut(self):
+        logging.info('load waveform LUT')
         self._sense_temperature()
         self._wait_busy_low()
 
     def _write_image_and_drive_display_panel(self, x_start=0, y_start=0, img: bytearray):
+        logging.info('write image and drive display pannel')
         self._write_img_data_in_ram(x_start, y_start, img)
+        self._set_softstart_setting()
+        self._drive_display_pannel()
+        self._wait_busy_low()
 
     def _power_off(self):
         logging.info('power off')
@@ -369,6 +375,13 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
         self._send_command('write_ram_bw')
         self._send_data_array(img)
+
+    def _set_softstart_setting(self):
+        self._send_command('booser_soft_start_control')
+        #TODO: send data
+
+    def _drive_display_pannel(self):
+        pass
 
     def _wait_busy_low(self):
         self._gpio_busy.wait_for_inactive()
