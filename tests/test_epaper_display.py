@@ -18,7 +18,7 @@ def display():
         draw = ImageDraw.Draw(img)
         x0 = epd.WIDTH // 2
         y0 = epd.HEIGHT // 2
-        draw.text(x0, y0, 'hello world')
+        draw.text((x0, y0), 'hello world')
         epd.display(img)
 
 
