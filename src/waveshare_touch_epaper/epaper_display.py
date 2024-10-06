@@ -174,6 +174,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             display_update_control=0x21,
             set_ram_x_adress_counter=0x4e,
             set_ram_y_adress_counter=0x4f,
+            write_ram_bw=0x24,
+            write_ram_red=0x26,
             )
 
     def __init__(self):
@@ -333,12 +335,16 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_data(0x80)
 
     def _write_img_data_in_ram(self, x_start, y_start):
+
         self._send_command('set_ram_x_adress_counter')
         self._send_data(x_start>>3)
+
         self._send_command('set_ram_y_adress_counter')
         low_byte, hi_byte = self._split_low_hi_bytes(y_start)
         self._send_data(low_byte)
         self._send_data(hi_byte)
+
+        self._send_command('write_ram_bw')
 
     def _wait_busy_low(self):
         self._gpio_busy.wait_for_inactive()
