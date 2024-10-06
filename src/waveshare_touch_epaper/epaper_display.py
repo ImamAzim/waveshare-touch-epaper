@@ -225,7 +225,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
                 )
 
     def _get_mono_img_bytearray(self, color, coord):
-        if coords is None:
+        if coord is None:
             x_start = 0
             x_end = self.WIDTH - 1
             y_start = 0
