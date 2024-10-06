@@ -297,7 +297,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         logging.info('send initialization code')
         self._set_gate_driver_output()
         self._set_display_RAM_size(coords)
-        if coords = None:
+        if coords is None:
             vcom = False
         else:
             vcom = True
