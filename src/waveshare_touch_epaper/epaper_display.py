@@ -184,6 +184,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._gpio_busy = gpiozero.Button(
                 self._BUSY_PIN,
                 pull_up=False)
+        self._spi = spidev.SpiDev(0, 0)
 
     def __enter__(self):
         self.open()
@@ -197,6 +198,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def close(self):
         self._power_off()
+        self._close_all_port()
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
@@ -208,7 +210,6 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def _set_initial_configuration(self):
         logging.info('set initial configuration')
-        self._spi = spidev.SpiDev(0, 0)
         self._spi.max_speed_hz = self._SPI_MAXSPEED
         self._spi.mode = self._SPI_MODE
         self._hw_reset()
@@ -232,10 +233,12 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def _power_off(self):
         logging.info('power off')
         self._deep_sleep()
-        self._spi.close()
         # TODO: check VCI pin
         self._gpio_rst.off()
         self._gpio_dc.off()
+
+    def _close_all_port(self):
+        self._spi.close()
         self._gpio_rst.close()
         self._gpio_dc.close()
         self._gpio_busy.close()
