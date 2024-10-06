@@ -171,6 +171,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             border_waveform_control=0x3c,
             temperature_sensor_control=0x18,
             deep_sleep_mode=0x10,
+            display_update_control=0x21,
             )
 
     def __init__(self):
@@ -219,6 +220,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._set_gate_driver_output()
         self._set_display_RAM_size(0, self.WIDTH-1, 0, self.HEIGHT-1)
         self._set_panel_border()
+        self._set_display_source_mode()
 
     def _load_waveform_lut(self):
         self._sense_temperature()
@@ -277,6 +279,12 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         gs_setting = 0b01  # LUT1
         data = gs_control + gs_setting + vbd_level + vbd_opt
         self._send_data(data)
+
+    def _set_display_source_mode(self):
+        self._send_command('display_update_control')
+        self._send_data(0x0)
+        source_output_mode = 0b1 << 7
+        self._send_data(source_output_mode)
 
     def _sense_temperature(self):
         self._send_command('temperature_sense_control')
