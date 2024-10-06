@@ -13,7 +13,7 @@ def touch_and_display_loop():
         draw = ImageDraw.Draw(img)
         draw.text((width/2, height/2), 'touch me!')
         with GT1151() as gt, EPD2in13() as epd:
-            epd.display(img, full=True)
+            epd.display(img)
             while True:
                 try:
                     x, y, s = gt.input(timeout=30)
@@ -25,9 +25,9 @@ def touch_and_display_loop():
                     dx = length / 2
                     draw.rectangle((x - dx, y - dx, x + dx, y + dx), fill=0)
                     try:
-                        epd.display(img, full=False)
+                        epd.display(img, full_refresh=False)
                     except EpaperException:
-                        epd.display(img, full=True)
+                        epd.display(img)
     except KeyboardInterrupt:
         print('goodbye')
 

@@ -250,6 +250,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         if full_refresh:
             coordinates = None
         else:
+            img.crop((0, 0, 60, 249))
             # TODO: compute smaller window size for img
             x_start = 0
             y_start = 0
