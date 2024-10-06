@@ -237,7 +237,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             # set init config (hard reset?)
             self._send_initialization_code()
             self._load_waveform_lut()
-            self._write_image_and_drive_display_panel()
+            self._write_image_and_drive_display_panel(byte_img)
             self._remaining_partial_refresh = self._MAX_PARTIAL_REFRESH
             self._partial_update()
         else:
@@ -252,7 +252,12 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             y_end = 249
             coords = (x_start, x_end, y_start, y_end)
             self._send_initialization_code(coords)
-            self._write_image_and_drive_display_panel(x_start, y_start)
+            self._write_image_and_drive_display_panel(
+                    byte_img,
+                    x_start,
+                    y_start,
+                    display_mode=2,
+                    )
             self._remaining_partial_refresh -= 1
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -283,11 +288,17 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._sense_temperature()
         self._wait_busy_low()
 
-    def _write_image_and_drive_display_panel(self, x_start=0, y_start=0, img: bytearray):
+    def _write_image_and_drive_display_panel(
+            self,
+            img: bytearray,
+            x_start=0,
+            y_start=0,
+            display_mode=1,
+            ):
         logging.info('write image and drive display pannel')
         self._write_img_data_in_ram(x_start, y_start, img)
         self._set_softstart_setting()
-        self._drive_display_pannel()
+        self._drive_display_pannel(display_mode)
         self._wait_busy_low()
 
     def _power_off(self):
@@ -387,9 +398,12 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         # self._send_data(0x96)
         # self._send_data(0x0f)
 
-    def _drive_display_pannel(self):
+    def _drive_display_pannel(self, display_mode):
         self._send_command('display_update_control_2')
-        data = 0xff
+        if display_mode==1:
+            data = 0xf7
+        else:
+            data = 0xff
         self._send_data(data)
         self._send_command('master_activation')
 
