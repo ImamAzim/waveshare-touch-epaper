@@ -205,6 +205,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def clear(self):
         self._send_initialization_code()
         self._load_waveform_lut()
+        color = 0b1
+        byte_color = 0xff * color
         img = bytearray()
         self._write_image_and_drive_display_panel(img=img)
 
@@ -347,6 +349,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_data(hi_byte)
 
         self._send_command('write_ram_bw')
+        self._send_data_array(img)
 
     def _wait_busy_low(self):
         self._gpio_busy.wait_for_inactive()
