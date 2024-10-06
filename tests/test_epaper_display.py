@@ -13,7 +13,7 @@ class TestEPD2in13Mock(unittest.TestCase):
         epd = epaper_models['EPD2in13Mock']()
 
 def display():
-    with epaper_models['EPD2in13'] as epd:
+    with epaper_models['EPD2in13']() as epd:
         img = Image.new('1', (epd.WIDTH, epd.HEIGHT), 255)
         draw = ImageDraw.Draw(img)
         x0 = epd.WIDTH // 2
