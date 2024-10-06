@@ -205,7 +205,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def _power_on(self):
         logging.info('power on')
-        # TODO: check VCI pin
+        logging.debug('power cannot be switched because rpi 3.3v connected')
         time.sleep(0.01)
 
     def _set_initial_configuration(self):
@@ -233,7 +233,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def _power_off(self):
         logging.info('power off')
         self._deep_sleep()
-        # TODO: check VCI pin
+        logging.debug('power cannot be switched because rpi 3.3v connected')
         self._gpio_rst.off()
         self._gpio_dc.off()
 
