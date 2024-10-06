@@ -35,14 +35,14 @@ class BaseEpaper(object, metaclass=ABCMeta):
 
     @abstractmethod
     def open(self):
-        """open the spi and gpio port
+        """power off, initial configuration and clear screen
 
         """
         pass
 
     @abstractmethod
     def __enter__(self):
-        """open port and full update
+        """use open method for context manager
         :returns: self
 
         """
@@ -61,28 +61,19 @@ class BaseEpaper(object, metaclass=ABCMeta):
 
     @abstractmethod
     def close(self):
-        """close the port so that display consume 0V
+        """deep sleep, power off device and close all ports
 
         """
         pass
 
-    # @abstractmethod
-    # def full_update(self):
-        # """initialization. should be called when the screen start working,
-        # after exiting sleep mode or possibly before full refresh
-
-        # """
-        # pass
-
     @abstractmethod
-    def display(self, img: Image.Image, full: bool, wait: bool):
+    def display(self, img: Image.Image, full_refresh: bool):
         """send img to epaper RAM and do a full or partial refresh
         (partial update will be called if full refresh)
 
         :img: that will be displayed
-        :full: if True, apply a full refresh, otherise a partial one
-        :wait: if True will wait for busy PIN(?)
-        :raise EpaperException: when img has incorrect dimension
+        :full_refresh: if True, apply a full refresh, otherise a partial one
+        :raise EpaperException: when too many consecutive partial refresh
 
         """
         pass
@@ -209,6 +200,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def clear(self, color=0b1, coordinates=None):
         """
+        clear the full screen
         :color: 1 for white, 0 for black
         :coords: if None, full screen is cleared
         if tuple (x_start, x_end, y_start, y_end) partial refresh in window
