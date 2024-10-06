@@ -232,7 +232,11 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         img_bytes = pixel_byte * N
         img = bytearray(img_bytes)
 
+    def _get_byte_img(self, img):
+        pass
+
     def display(self, img: Image.Image, full=True, wait=False):
+        byte_img = self._get_byte_img(img)
         if full:
             # set init config (hard reset?)
             self._send_initialization_code()
