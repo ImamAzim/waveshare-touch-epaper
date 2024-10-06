@@ -177,6 +177,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             write_ram_bw=0x24,
             write_ram_red=0x26,
             booster_soft_start_control=0x0c,
+            display_update_control_2=0x22,
+            master_activation=0x20,
             )
 
     def __init__(self):
@@ -386,8 +388,10 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         # self._send_data(0x0f)
 
     def _drive_display_pannel(self):
-        #TODO: write func
-        pass
+        self._send_command('display_update_control_2')
+        data = 0xff
+        self._send_data(data)
+        self._send_command('master_activation')
 
     def _wait_busy_low(self):
         self._gpio_busy.wait_for_inactive()
