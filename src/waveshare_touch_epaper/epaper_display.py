@@ -425,6 +425,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_command('master_activation')
 
     def _wait_busy_low(self):
+        self._gpio_busy.wait_for_active(timeout=0.1)  # in case busy not yet high
         self._gpio_busy.wait_for_inactive()
 
     def _deep_sleep(self):
