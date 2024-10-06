@@ -215,7 +215,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
                 msg = 'too many partial refresh. need a full refresh'
                 raise EpaperException(msg)
             # set init config (soft reset?)
-            self._send_initialization_code()  # se smaller window?
+            coords = (0, 121, 0, 249)  # TODO: compute window size for img
+            self._send_initialization_code(coords)
             self._write_image_and_drive_display_panel()
             self._remaining_partial_refresh -= 1
 
@@ -235,10 +236,10 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_command('reset')
         time.sleep(0.01)
 
-    def _send_initialization_code(self):
+    def _send_initialization_code(self, coords=None):
         logging.info('send initialization code')
         self._set_gate_driver_output()
-        self._set_display_RAM_size(0, self.WIDTH-1, 0, self.HEIGHT-1)
+        self._set_display_RAM_size(coords)
         self._set_panel_border()
         self._set_display_source_mode()
 
@@ -276,7 +277,20 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_data(0x00)
         self._send_data(0x00)
 
-    def _set_display_RAM_size(self, x_start, x_end, y_start, y_end):
+    def _set_display_RAM_size(self, coords):
+        """set windows size to be refreshed.
+
+        :coords: if None, full screen is refresh
+        if tuple (x_start, x_end, y_start, y_end) coord of window
+
+        """
+        if coords is None:
+            x_start = 0
+            x_end = self.WIDTH - 1
+            y_start = 0
+            y_end = self.HEIGHT - 1
+        else:
+            x_start, x_end, y_start, y_end = coords
         self._send_command('data_entry_mode_setting')
         self._send_data(0b011)
         self._send_command('set_ram_x')
