@@ -203,8 +203,10 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._close_all_port()
 
     def clear(self):
-        img = Image.new('1', (self.WIDTH, self.HEIGHT), 255)
-        img.show()
+        self._send_initialization_code()
+        self._load_waveform_lut()
+        img = bytearray()
+        self._write_image_and_drive_display_panel(img=img)
 
     def display(self, img: Image.Image, full=True, wait=False):
         if full:
@@ -256,8 +258,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._sense_temperature()
         self._wait_busy_low()
 
-    def _write_image_and_drive_display_panel(self, x_start=0, y_start=0):
-        self._write_img_data_in_ram(x_start, y_start)
+    def _write_image_and_drive_display_panel(self, x_start=0, y_start=0, img: bytearray):
+        self._write_img_data_in_ram(x_start, y_start, img)
 
     def _power_off(self):
         logging.info('power off')
@@ -334,7 +336,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         self._send_command('temperature_sense_control')
         self._send_data(0x80)
 
-    def _write_img_data_in_ram(self, x_start, y_start):
+    def _write_img_data_in_ram(self, x_start, y_start, img: bytearray):
 
         self._send_command('set_ram_x_adress_counter')
         self._send_data(x_start>>3)
@@ -367,6 +369,10 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def _send_data(self, data):
         self._gpio_dc.on()
         self._spi.writebytes([data])
+
+    def _send_data_array(self, data_array):
+        self._gpio_dc.on()
+        self._spi.writebytes(data_array)
 
     def _partial_update(self):
         logging.info('partial update mock')
