@@ -193,8 +193,6 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def open(self):
         self._power_on()
         self._set_initial_configuration()
-        self._send_initialization_code()
-        self._load_waveform_lut()
 
     def close(self):
         self._power_off()
@@ -327,11 +325,17 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def display(self, img: Image.Image, full=True, wait=False):
         if full:
-            pass
+            # set init config (hard reset?)
+            self._send_initialization_code()
+            self._load_waveform_lut()
+            self._write_image_and_drive_display_panel()
             self._remaining_partial_refresh = self._MAX_PARTIAL_REFRESH
             self._partial_update()
         else:
             if self._remaining_partial_refresh == 0:
                 msg = 'too many partial refresh. need a full refresh'
                 raise EpaperException(msg)
+            # set init config (soft reset?)
+            self._send_initialization_code()  # se smaller window?
+            self._write_image_and_drive_display_panel()
             self._remaining_partial_refresh -= 1
