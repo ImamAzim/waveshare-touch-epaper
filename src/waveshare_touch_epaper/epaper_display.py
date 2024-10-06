@@ -255,7 +255,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
             y_start = 0
             x_end = self.WIDTH - 1
             y_end = self.HEIGHT - 1
-            coordinates = (x_start, x_send, y_start, y_end)
+            coordinates = (x_start, x_end, y_start, y_end)
         self._process_display(byte_img, coordinates=coordinates, full_refresh=full_refresh)
 
     def _process_display(self, byte_img: bytearray, coordinates, full_refresh: bool):
