@@ -221,7 +221,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
                 byte_img,
                 x_start,
                 y_start,
-                display_mode=2,
+                display_mode=display_mode,
                 )
 
     def _get_mono_img_bytearray(self, color, coord):
