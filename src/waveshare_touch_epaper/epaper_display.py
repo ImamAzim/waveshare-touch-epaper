@@ -179,6 +179,11 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
         """
         self._remaining_partial_refresh = None
+        self._gpio_rst = gpiozero.LED(self._RST_PIN)
+        self._gpio_dc = gpiozero.LED(self._DC_PIN)
+        self._gpio_busy = gpiozero.Button(
+                self._BUSY_PIN,
+                pull_up=False)
 
     def __enter__(self):
         self.open()
@@ -199,11 +204,6 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def _power_on(self):
         logging.info('power on')
         # TODO: check VCI pin
-        self._gpio_rst = gpiozero.LED(self._RST_PIN)
-        self._gpio_dc = gpiozero.LED(self._DC_PIN)
-        self._gpio_busy = gpiozero.Button(
-                self._BUSY_PIN,
-                pull_up=False)
         time.sleep(0.01)
 
     def _set_initial_configuration(self):
