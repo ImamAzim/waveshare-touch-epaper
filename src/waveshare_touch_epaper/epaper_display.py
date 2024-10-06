@@ -245,7 +245,8 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         pixel_byte = byte_color.to_bytes(1, 'big')
         N = ((x_end - x_start + 1) >> 3) * (y_end - y_start + 1)
         img_bytes = pixel_byte * N
-        img = bytearray(img_bytes)
+        img_byte_array = bytearray(img_bytes)
+        return img_byte_array
 
     def _get_byte_img(self, img):
         raise NotImplementedError
@@ -399,7 +400,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
     def _write_img_data_in_ram(self, x_start, y_start, img: bytearray):
 
         self._send_command('set_ram_x_adress_counter')
-        self._send_data(x_start>>3)
+        self._send_data(x_start >> 3)
 
         self._send_command('set_ram_y_adress_counter')
         low_byte, hi_byte = self._split_low_hi_bytes(y_start)
@@ -420,7 +421,7 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
 
     def _drive_display_pannel(self, display_mode):
         self._send_command('display_update_control_2')
-        if display_mode==1:
+        if display_mode == 1:
             data = 0xf7
         else:
             data = 0xff
