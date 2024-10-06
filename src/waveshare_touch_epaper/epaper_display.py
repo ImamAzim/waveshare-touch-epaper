@@ -241,7 +241,9 @@ class EPD2in13(BaseEpaper, metaclass=MetaEpaper):
         return img_byte_array
 
     def _get_byte_img(self, img):
-        raise NotImplementedError
+        img.convert('1')
+        byte_img = bytearray(img.tobytes())
+        return byte_img
 
     def display(self, img: Image.Image, full_refresh=True):
         byte_img = self._get_byte_img(img)
