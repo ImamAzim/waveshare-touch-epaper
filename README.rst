@@ -35,61 +35,44 @@ If you work in a virtual environement, you will need first:
 
 Usage
 ========
-deprecated!
-TODO: rewrite this section after the refactor..
-
 
 To use a epaper display (to be changed):
+here is a full example to load the epd display and its touch screen. everytime we touch the screen, it draw a point.
 
 .. code-block:: python
 
-    from waveshare_touch_epaper import epd2in13_V4 # to import module for other device, use dir function on the package name
+        from PIL import Image, ImageDraw
 
-    epd = epd2in13_V4.EPD()
 
-    epd.init(epd.FULL_UPDATE)
-    epd.Clear(0xFF)
+        from waveshare_touch_epaper.epaper_display import EPD2in13, EpaperException
+        from waveshare_touch_epaper.touch_screen import GT1151, TouchEpaperException
 
-    # add some code here to display images
 
-    epd.sleep()
-    epd.Dev_exit()
-
-You can follow the `examples <https://github.com/waveshareteam/Touch_e-Paper_HAT/tree/main/python/examples>`_ from the waveshare team to display some images
-
-To use the touch screen:
-
-.. code-block:: python
-
-    from waveshare_touch_epaper.touch_screen import GT1151
-
-    gt = GT1151()
-    gt.start()
-    x, y = gt.input()  # return when touch detected and return its coordinates
-    print('please do a left slide')
-    gt.wait_for_gesture(gesture='left_slide')
-    gt.stop()
-
-you can also use a context manager:
-
-.. code-block:: python
-
-    from waveshare_touch_epaper.touch_screen import GT1151
-
-    with GT1151() as gt:
-        x, y = gt.input()  # return when touch detected and return its coordinates
-
-when the object is stopped, you cannot use it anymore, but you can set it to sleep to reduce current consumption. It will awake when you ask for input:
-
-.. code-block:: python
-
-    from waveshare_touch_epaper.touch_screen import GT1151
-
-    with GT1151() as gt:
-        x, y = gt.input()
-        gt.sleep()
-        time.sleep(100)
-        x, y = gt.input()
+        def touch_and_display_loop():
+            try:
+                width = EPD2in13.WIDTH
+                height = EPD2in13.HEIGHT
+                img = Image.new('1', (width, height), 255)
+                draw = ImageDraw.Draw(img)
+                draw.text((width/2, height/2), 'touch me!')
+                with GT1151() as gt, EPD2in13() as epd:
+                    epd.display(img)
+                    while True:
+                        try:
+                            x, y, s = gt.input(timeout=30)
+                        except TouchEpaperException:
+                            print('no touch detected during timeout, exit')
+                            break
+                        else:
+                            length = s ** 0.5
+                            dx = length / 2
+                            draw.rectangle((x - dx, y - dx, x + dx, y + dx), fill=0)
+                            try:
+                                epd.display(img, full_refresh=False)
+                            except EpaperException:
+                                epd.display(img)
+            except KeyboardInterrupt:
+                print('goodbye')
 
 Features
 ========
