@@ -158,6 +158,42 @@ and it is possible to clear the image:
    epd.clear()  # all the sreen becomes white
    epd.clear(0)  # all the screen becomes black
 
+touch screen input read
+--------------------------
+
+one can read the input of the touch screen:
+
+.. code-block:: python
+   x, y, s = gt.input()  # x, y coordinates, s size of touch
+
+the method will block until a touch is detected (and only if it is different from the previous coordinates). you can add a timeout, so that it will raise a TouchEpaperException if no touch is detected during this time:
+
+.. code-block:: python
+   x, y, s = gt.input(timeout=30)  # raise exception if no touch after 30s
+
+touch screen can be set in sleep mode to reduce consumption. It will be set back in normal mode automaticely when we ask for input:
+
+.. code-block:: python
+   gt.sleep()
+
+one can also switch to gesture mode and wait for specific gesture (slide_left, slide_right, etc...)
+.. code-block:: python
+   gt.wait_for_gesture(gesture='left_slide')
+
+The method will block until such gesture is detected. possible gesture are (right_slide, left_slide, slide_up, slide_down, double_click,)
+
+mock mode
+-------------
+
+there a mock classes:
+
+.. code-block:: python
+   epd = epaper_models['EPD2in13Mock']
+   gt = epaper_models['GT1151Mock']
+
+there is no need of the waveshare device nor any gpio or i2c port (so an desktop computer). The display uses the show method of PIL and the input comes from the keyboard.
+
+
 Features
 ========
 
