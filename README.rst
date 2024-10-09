@@ -1,7 +1,7 @@
 waveshare touch epaper
 =========================
 
-a refactor of python library `waveshare library <https://github.com/waveshareteam/Touch_e-Paper_HAT>`_ for the Touch epaper display 2.13 inches, more pythonic and easier to use. Like this, you can directly use pip to install the library in your virtual environement, without the need to clone or download all the files.
+a refactor of python library `waveshare library <https://github.com/waveshareteam/Touch_e-Paper_HAT>`_ for the `Touch epaper display 2.13 inches <https://www.waveshare.com/wiki/2.13inch_Touch_e-Paper_HAT>`_, more pythonic and easier to use. Like this, you can directly use pip to install the library in your virtual environement, without the need to clone or download all the files.
 
 hardware requirements
 =======================
