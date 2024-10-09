@@ -22,8 +22,8 @@ be sure that you have activated the spi and i2c interface. On the raspberry pi:
 and then you can install the package with pip
 
 .. code-block:: bash
-   
-    pip install waveshare-epaper
+
+   pip install waveshare-touch-epaper
 
 If you work in a virtual environement, you will need first:
 
