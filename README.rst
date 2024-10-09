@@ -187,6 +187,7 @@ touch screen can be set in sleep mode to reduce consumption. It will be set back
    gt.sleep()
 
 one can also switch to gesture mode and wait for specific gesture (slide_left, slide_right, etc...)
+
 .. code-block:: python
 
    gt.wait_for_gesture(gesture='left_slide')
