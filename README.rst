@@ -177,6 +177,7 @@ one can read the input of the touch screen:
 the method will block until a touch is detected (and only if it is different from the previous coordinates). you can add a timeout, so that it will raise a TouchEpaperException if no touch is detected during this time:
 
 .. code-block:: python
+
    x, y, s = gt.input(timeout=30)  # raise exception if no touch after 30s
 
 touch screen can be set in sleep mode to reduce consumption. It will be set back in normal mode automaticely when we ask for input:
