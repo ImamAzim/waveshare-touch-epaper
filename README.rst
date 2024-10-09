@@ -1,6 +1,6 @@
 waveshare touch epaper
 =========================
-in development
+
 a refactor of python library `waveshare library <https://github.com/waveshareteam/Touch_e-Paper_HAT>`_ for the Touch epaper display 2.13 inches, more pythonic and easier to use. Like this, you can directly use pip to install the library in your virtual environement, without the need to clone or download all the files.
 
 hardware requirements
@@ -22,8 +22,8 @@ be sure that you have activated the spi and i2c interface. On the raspberry pi:
 and then you can install the package with pip
 
 .. code-block:: bash
-
-    pip install git+https://github.com/ImamAzim/waveshare-touch-epaper.git
+   
+    pip install waveshare-epaper
 
 If you work in a virtual environement, you will need first:
 
@@ -36,8 +36,12 @@ If you work in a virtual environement, you will need first:
 Usage
 ========
 
-To use a epaper display (to be changed):
-here is a full example to load the epd display and its touch screen. everytime we touch the screen, it draw a point.
+we show first a full example issued from the test, then we look at each feature in details.
+
+full example
+-----------------
+
+full script to use the epd display and its touch screen (2in13). everytime we touch the screen, it draw a point.
 
 .. code-block:: python
 
@@ -73,6 +77,54 @@ here is a full example to load the epd display and its touch screen. everytime w
                                 epd.display(img)
             except KeyboardInterrupt:
                 print('goodbye')
+
+
+import classes
+------------------
+
+you can either import directly the classes in the epaper_display and touch_screen module:
+
+.. code-block:: python
+
+        from waveshare_touch_epaper.epaper_display import EPD2in13, EpaperException
+        from waveshare_touch_epaper.touch_screen import GT1151, TouchEpaperException
+
+
+        epd = EPD2in13()
+
+or you can use the following dictionary to get all the available classes:
+
+.. code-block:: python
+   from waveshare_touch_epaper import touch_screen_models, epaper_models
+
+
+   print(epaper_models.keys())
+   epd = epaper_models['EPD2in13']
+
+
+start and stop
+__________________________
+
+to use the epd or the touch screen, you need to open the port, reset, etc. At the end, it is better to close the object to close the port and put in sleep mode to reduce consumption. This is done with the open/close and start/stop method:
+
+.. code-block:: python
+   epd.start()
+   # display some stuff..
+   epd.stop()
+   gt.open()
+   # read input of touch screen
+   gt.close()
+
+and this can also be done in a context manager:
+
+.. code-block:: python
+   with EPD2in13() as epd:
+       pass
+       # display some stuff
+   with GT1151() as gt:
+       pass
+       # read some input
+
 
 Features
 ========
