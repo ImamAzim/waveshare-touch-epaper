@@ -95,6 +95,7 @@ you can either import directly the classes in the epaper_display and touch_scree
 or you can use the following dictionary to get all the available classes:
 
 .. code-block:: python
+
    from waveshare_touch_epaper import touch_screen_models, epaper_models
 
 
@@ -108,6 +109,7 @@ __________________________
 to use the epd or the touch screen, you need to open the port, reset, etc. At the end, it is better to close the object to close the port and put in sleep mode to reduce consumption. This is done with the open/close and start/stop method:
 
 .. code-block:: python
+
    epd.start()
    # display some stuff..
    epd.stop()
@@ -118,6 +120,7 @@ to use the epd or the touch screen, you need to open the port, reset, etc. At th
 and this can also be done in a context manager:
 
 .. code-block:: python
+
    with EPD2in13() as epd:
        pass
        # display some stuff
@@ -131,6 +134,7 @@ display images
 with the epaper display class you can access the dimensions, and display some images:
 
 .. code-block:: python
+
    from PIL import Image
 
 
@@ -142,11 +146,13 @@ with the epaper display class you can access the dimensions, and display some im
 by default this will make a full refresh. you can also use a partial refresh:
 
 .. code-block:: python
+
    epd.display(img, full_refresh=False)
 
 however, after a certain number of consecutive partial display, it will raise an error so that you can only do a full refresh. Do handle this case without counting the number of partial refresh you can use a try/except:
 
 .. code-block:: python
+
     try:
         epd.display(img, full_refresh=False)
     except EpaperException:
@@ -155,6 +161,7 @@ however, after a certain number of consecutive partial display, it will raise an
 and it is possible to clear the image:
 
 .. code-block:: python
+
    epd.clear()  # all the sreen becomes white
    epd.clear(0)  # all the screen becomes black
 
@@ -164,6 +171,7 @@ touch screen input read
 one can read the input of the touch screen:
 
 .. code-block:: python
+
    x, y, s = gt.input()  # x, y coordinates, s size of touch
 
 the method will block until a touch is detected (and only if it is different from the previous coordinates). you can add a timeout, so that it will raise a TouchEpaperException if no touch is detected during this time:
@@ -174,10 +182,12 @@ the method will block until a touch is detected (and only if it is different fro
 touch screen can be set in sleep mode to reduce consumption. It will be set back in normal mode automaticely when we ask for input:
 
 .. code-block:: python
+
    gt.sleep()
 
 one can also switch to gesture mode and wait for specific gesture (slide_left, slide_right, etc...)
 .. code-block:: python
+
    gt.wait_for_gesture(gesture='left_slide')
 
 The method will block until such gesture is detected. possible gesture are (right_slide, left_slide, slide_up, slide_down, double_click,)
@@ -188,6 +198,7 @@ mock mode
 there a mock classes:
 
 .. code-block:: python
+
    epd = epaper_models['EPD2in13Mock']
    gt = epaper_models['GT1151Mock']
 
