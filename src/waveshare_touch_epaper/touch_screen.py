@@ -91,7 +91,7 @@ class GT1151Mock(BaseTouchScreen, metaclass=MetaTouchScreen):
 
         return int(x_str), int(y_str), int(s_str)
 
-    def wait_for_gesture(self):
+    def wait_for_gesture(self, gesture=None):
         """gesture is replaced by input enter"""
         input('press enter to sim a gesture:\n')
 
