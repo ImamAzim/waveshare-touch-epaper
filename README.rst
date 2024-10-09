@@ -98,7 +98,7 @@ or you can use the following dictionary to get all the available classes:
 
 .. code-block:: python
 
-   from waveshare_touch_epaper import touch_screen_models, epaper_models
+   from waveshare_touch_epaper import touchscreen_models, epaper_models
 
 
    print(epaper_models.keys())
