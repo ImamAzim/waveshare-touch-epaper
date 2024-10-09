@@ -125,6 +125,38 @@ and this can also be done in a context manager:
        pass
        # read some input
 
+display images
+-----------------
+
+with the epaper display class you can access the dimensions, and display some images:
+
+.. code-block:: python
+   from PIL import Image
+
+
+   width = epd.WIDTH
+   height = epd.HEIGHT
+   img = Image.new('1', (width, height), 255)
+   epd.display(img)
+
+by default this will make a full refresh. you can also use a partial refresh:
+
+.. code-block:: python
+   epd.display(img, full_refresh=False)
+
+however, after a certain number of consecutive partial display, it will raise an error so that you can only do a full refresh. Do handle this case without counting the number of partial refresh you can use a try/except:
+
+.. code-block:: python
+    try:
+        epd.display(img, full_refresh=False)
+    except EpaperException:
+        epd.display(img)
+
+and it is possible to clear the image:
+
+.. code-block:: python
+   epd.clear()  # all the sreen becomes white
+   epd.clear(0)  # all the screen becomes black
 
 Features
 ========
